@@ -1,0 +1,214 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+Navigation projects core module.
+"""
+
+import os.path
+import collections
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QDir
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QTreeView
+from PyQt5.QtWidgets import QFileSystemModel
+from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QMessageBox
+
+from .file_system_helper import FileSystemHelper
+
+class Navigation(QWidget):
+    """
+    Navigation class definition.
+    
+    Provide a combobox to switch on each opened directories and display it into
+    a tree view
+    
+    Provide 2 useful function (to use in alter module):
+      - add_action(name, shortcut, callback)
+         - callback take 2 arguments : file_info and parent
+      - add_separator()
+    
+    """
+    
+    onFileItemActivated = pyqtSignal(QFileInfo, name="onFileItemActivated")
+    onDirItemActivated = pyqtSignal(QFileInfo, name="onDirItemActivated")
+    
+    def __init__(self, parent=None):
+        super(Navigation, self).__init__(parent)
+        self.layout = QVBoxLayout(self)
+        
+        self.combo = QComboBox(self)
+        # activated signal only to open direcotry
+        self.combo.activated.connect(self.on_combo_activated)
+        self.combo.addItem("Open directory", None)
+        # else use currentIndexChanged signal
+        self.combo.currentIndexChanged.connect(self.on_combo_index_changed)
+        
+        self.tree = QTreeView(self)
+        self.model = QFileSystemModel()
+        self.tree.setModel(self.model)
+        self.tree.setColumnHidden(1, True)
+        self.tree.setColumnHidden(2, True)
+        self.tree.setColumnHidden(3, True)
+        self.tree.setHeaderHidden(True)
+        # only to expand directory or activated with one click
+        self.tree.clicked.connect(self.on_item_clicked)
+        # else, for file use activated signal
+        self.tree.activated.connect(self.on_item_activated)
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.on_context_menu)
+        
+        self.widgets = collections.OrderedDict()
+        self.widgets['combo'] = self.combo
+        self.widgets['tree'] = self.tree
+        
+        # @ToDo: Alter.invoke_all('add_widget', self.widgets)
+        
+        for widget in self.widgets.values():
+            self.layout.addWidget(widget)
+        
+        self.context_menu = QMenu(self)
+        self.add_action('New file', QKeySequence.New, 
+                        FileSystemHelper.new_file)
+        self.add_separator()
+        self.add_action('Copy', QKeySequence.Copy, FileSystemHelper.copy)
+        self.add_action('Cut', QKeySequence.Cut, FileSystemHelper.cut)
+        self.add_action('Paste', QKeySequence.Paste, FileSystemHelper.paste)
+        self.add_separator()
+        self.add_action('Delete', QKeySequence.Delete, 
+                        FileSystemHelper.delete)
+        # @ToDo Alter.invoke_all('navigation_add_action', self)
+    
+    def add_action(self, name, shortcut, callback, icon = None):
+        """
+        Ajoute une action au context menu et au widget navigation lui même.
+        Créer une fonction à la volé pour fournir des arguments aux fonctions
+        associé aux actions.
+        """
+        action = QAction(name, self)
+        if icon:
+            action.setIcon(icon)
+        action.setShortcut(shortcut)
+        action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        action.triggered.connect(self.__wrapper(callback))
+        self.addAction(action)
+        self.context_menu.addAction(action)
+    
+    def add_separator(self):
+        """Simple abstraction of self.context_menu.addSeparator()"""
+        self.context_menu.addSeparator()
+    
+    def __wrapper(self, callback):
+        def __new_function():
+            """
+            __new_function représente la forme de tous les callbacks connecté
+            à une action pour pouvoir utiliser les raccourcis en même temps que
+            le menu contextuel.
+            """
+            action = self.sender()
+            file_info = action.data()
+            if not file_info:
+                indexes = self.tree.selectedIndexes()
+                if indexes:
+                    model_index = indexes[0]
+                    file_info = self.model.fileInfo(model_index)
+                    callback(file_info, self)
+                elif action.shortcut() == QKeySequence.New:
+                    file_info = self.model.fileInfo(self.tree.rootIndex())
+                    callback(file_info, self)
+            else:
+                callback(file_info, self)
+                action.setData(None)
+        return __new_function
+    
+    def question(self, text, informative_text = None):
+        message_box = QMessageBox(self)
+        message_box.setText(text)
+        if informative_text:
+            message_box.setInformativeText(informative_text)
+        message_box.setStandardButtons(
+            QMessageBox.No | QMessageBox.Yes)
+        message_box.setDefaultButton(QMessageBox.No)
+        return message_box.exec()
+    
+    def on_context_menu(self, point):
+        model_index = self.tree.indexAt(point)
+        file_info = self.model.fileInfo(model_index)
+        # pour chaque action on met a jour les data (file_info)
+        # puis on altère les actions (ex enabled)
+        for action in self.context_menu.actions():
+            if not action.isSeparator():
+                action.setData(file_info)
+                action.setEnabled(model_index.isValid())
+                if action.shortcut() == QKeySequence.New:
+                    action.setEnabled(True)
+                    if not model_index.isValid():
+                        file_info = self.model.fileInfo(self.tree.rootIndex())
+                        action.setData(file_info)
+                if action.shortcut() == QKeySequence.Paste:
+                    enable = FileSystemHelper.ready() and model_index.isValid()
+                    action.setEnabled(enable)
+                if action.shortcut() == QKeySequence.Delete:
+                    # remove directory only if is an empty directory
+                    if model_index.isValid() and file_info.isDir():
+                        path = file_info.absoluteFilePath()
+                        # QDir(path).count() always contains '.' and '..'
+                        action.setEnabled(QDir(path).count() == 2)
+                # @ToDo 
+                #Alter.invoke_all(
+                #    'navigation_on_menu_action', 
+                #    model_index, file_info, action, self)
+        if len(self.context_menu.actions()) > 0:
+            self.context_menu.exec(self.tree.mapToGlobal(point))
+        # reset action data, sinon y a des problème dans _new_function
+        for action in self.context_menu.actions():
+            action.setData(None)
+    
+    def on_item_activated(self, index):
+        qFileInfo = self.model.fileInfo(index)
+        if qFileInfo.isDir():
+            self.onDirItemActivated.emit(qFileInfo)
+        else:
+            self.onFileItemActivated.emit(qFileInfo)
+    
+    def on_item_clicked(self, index):
+        qFileInfo = self.model.fileInfo(index)
+        if qFileInfo.isDir():
+            self.onDirItemActivated.emit(qFileInfo)
+            self.tree.setExpanded(index, not self.tree.isExpanded(index))
+        else:
+            self.onFileItemActivated.emit(qFileInfo)
+    
+    def on_combo_activated(self, index):
+        path = self.combo.itemData(index)
+        if not path:
+            self.open_directory()
+    
+    def on_combo_index_changed(self, index):
+        path = self.combo.itemData(index)
+        if path:
+            self.model.setRootPath(path)
+            self.tree.setRootIndex(self.model.index(path))
+    
+    def open_directory(self):
+        path = QFileDialog.getExistingDirectory(self, "Open Directory", ".")
+        if path:
+            self.combo.setCurrentIndex(self.combo_add_item(path))
+    
+    def combo_add_item(self, abspath):
+        index = self.combo.findData(abspath)
+        if index == -1:
+            self.combo.addItem(os.path.basename(abspath), abspath)
+            index = self.combo.count()-1
+            self.combo.setItemData(index, abspath, Qt.ToolTipRole)
+        return index
