@@ -10,6 +10,12 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 
+from alter import Alter
+
+@Alter.alter('main_window_add_horizontal_widget')
+def add_horizontal_widget(horizontal_widgets, parent):
+    horizontal_widgets.append(TabWidget(parent))
+
 
 class TabWidget(QTabWidget):
     """

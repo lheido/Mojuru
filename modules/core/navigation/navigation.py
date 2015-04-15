@@ -17,14 +17,20 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QTreeView
 from PyQt5.QtWidgets import QFileSystemModel
-from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QMessageBox
 
+from alter import Alter
 from .file_system_helper import FileSystemHelper
+
+@Alter.alter('main_window_add_horizontal_widget')
+def add_horizontal_widget(horizontal_widgets, parent):
+    horizontal_widgets.append(Navigation(parent))
+
 
 class Navigation(QWidget):
     """
@@ -46,16 +52,29 @@ class Navigation(QWidget):
     def __init__(self, parent=None):
         super(Navigation, self).__init__(parent)
         self.layout = QVBoxLayout(self)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0,0,0,0)
         
-        self.combo = QComboBox(self)
-        # activated signal only to open direcotry
-        self.combo.activated.connect(self.on_combo_activated)
-        self.combo.addItem("Open directory", None)
-        # else use currentIndexChanged signal
-        self.combo.currentIndexChanged.connect(self.on_combo_index_changed)
+        self.menu_button = QPushButton('Select directory', self)
+        self.menu_button.setFlat(True)
+        self.menu_button.clicked.connect(self.on_menu_button_clicked)
+        self.menu_button.setStyleSheet(
+            """
+            QPushButton { text-align: center; }
+            QPushButton:focus { outline: none; border: none; }
+            """    
+        )
+        self.menu = QMenu(self)
+        self.menu_directories = QMenu(self)
+        self.menu_directories.setTitle('Directories')
+        self.menu_add_action(
+            'Open directory', self.open_directory, None, QKeySequence.Open)
+        # @TODO invoke_all
+        self.menu_add_separator()
+        self.menu.addMenu(self.menu_directories)
         
         self.tree = QTreeView(self)
-        self.model = QFileSystemModel()
+        self.model = QFileSystemModel(self)
         self.tree.setModel(self.model)
         self.tree.setColumnHidden(1, True)
         self.tree.setColumnHidden(2, True)
@@ -69,7 +88,7 @@ class Navigation(QWidget):
         self.tree.customContextMenuRequested.connect(self.on_context_menu)
         
         self.widgets = collections.OrderedDict()
-        self.widgets['combo'] = self.combo
+        self.widgets['menu_button'] = self.menu_button
         self.widgets['tree'] = self.tree
         
         # @ToDo: Alter.invoke_all('add_widget', self.widgets)
@@ -88,6 +107,37 @@ class Navigation(QWidget):
         self.add_action('Delete', QKeySequence.Delete, 
                         FileSystemHelper.delete)
         # @ToDo Alter.invoke_all('navigation_add_action', self)
+    
+    def on_menu_button_clicked(self):
+        pos = self.mapToGlobal(self.menu_button.pos())
+        menu_width = self.menu.sizeHint().width()
+        pos.setY(pos.y() + self.menu_button.height())
+#        pos.setX(pos.x() + self.menu_button.width() - menu_width)
+        if len(self.menu.actions()) > 0:
+            self.menu.exec(pos)
+    
+    def menu_add_action(self, name, callback, data=None, shortcut=None, icon=None):
+        action = QAction(name, self)
+        if icon:
+            action.setIcon(icon)
+        if shortcut:
+            action.setShortcut(shortcut)
+            action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        if data:
+            action.setData(data)
+        action.triggered.connect(callback)
+        self.addAction(action)
+        self.menu.addAction(action)
+    
+    def menu_add_directory(self, name, data):
+        action = QAction(name, self)
+        action.setData(data)
+        action.triggered.connect(self.on_menu_action_triggered)
+        self.menu_directories.addAction(action)
+        return action
+    
+    def menu_add_separator(self):
+        self.menu.addSeparator()
     
     def add_action(self, name, shortcut, callback, icon = None):
         """
@@ -189,26 +239,18 @@ class Navigation(QWidget):
         else:
             self.onFileItemActivated.emit(qFileInfo)
     
-    def on_combo_activated(self, index):
-        path = self.combo.itemData(index)
-        if not path:
-            self.open_directory()
-    
-    def on_combo_index_changed(self, index):
-        path = self.combo.itemData(index)
-        if path:
-            self.model.setRootPath(path)
-            self.tree.setRootIndex(self.model.index(path))
-    
     def open_directory(self):
         path = QFileDialog.getExistingDirectory(self, "Open Directory", ".")
         if path:
-            self.combo.setCurrentIndex(self.combo_add_item(path))
+            name = os.path.basename(path)
+            action = self.menu_add_directory(name, path)
+            action.trigger()
     
-    def combo_add_item(self, abspath):
-        index = self.combo.findData(abspath)
-        if index == -1:
-            self.combo.addItem(os.path.basename(abspath), abspath)
-            index = self.combo.count()-1
-            self.combo.setItemData(index, abspath, Qt.ToolTipRole)
-        return index
+    def on_menu_action_triggered(self):
+        action = self.sender()
+        path = action.data()
+        if path:
+            self.model.setRootPath(path)
+            self.tree.setRootIndex(self.model.index(path))
+            self.menu_button.setText(name)
+    

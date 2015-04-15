@@ -33,7 +33,7 @@ class Mojuru(QApplication):
     
     def run(self):
         Alter.invoke_all('mojuru_set_main_window', self)
-        self.exec()
+        print(self.exec_())
 
 if __name__ == "__main__":
     import sys

@@ -22,6 +22,8 @@
         Assume that your alterations is registered before loading modules with :
         >> Alter.register('alter')
 """
+import collections
+
 from .exceptions import NotRegisteredModule
 from .exceptions import NotRegisteredAlteration
 from .exceptions import StaticClassException
@@ -34,7 +36,7 @@ class Alter:
     Don't instanciate this class.
     """
     
-    alterations = {}
+    alterations = collections.OrderedDict()
     
     def __init__(self):
         raise StaticClassException(self.__class__.__name__)
@@ -45,7 +47,7 @@ class Alter:
         Register an alteration name.
         """
         if alter not in cls.alterations.keys():
-            cls.alterations[alter] = {}
+            cls.alterations[alter] = collections.OrderedDict()
     
     @classmethod
     def alter(cls, alter):
