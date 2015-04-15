@@ -11,7 +11,12 @@ from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QStatusBar
 
+from alter import Alter
 from .editor import Editor
+
+@Alter.alter('tab_widget_add_tab')
+def open_file(tab_widget, file_info):
+    tab_widget.add_tab(EditorWidget, file_info)
 
 
 class EditorWidget(QWidget):

@@ -14,7 +14,12 @@ from alter import Alter
 
 @Alter.alter('main_window_add_horizontal_widget')
 def add_horizontal_widget(horizontal_widgets, parent):
-    horizontal_widgets.append(TabWidget(parent))
+    horizontal_widgets["tab_widget"] = TabWidget(parent)
+
+@Alter.alter('connect_widgets')
+def connect_widgets(vertical_widgets, horizontal_widgets):
+    getattr(horizontal_widgets['navigation'], 'onFileItemActivated').connect(
+        getattr(horizontal_widgets['tab_widget'], 'onFileItemActivated'))
 
 
 class TabWidget(QTabWidget):
@@ -49,7 +54,10 @@ class TabWidget(QTabWidget):
     # decorator because reduce the amount of memory used and is slightly faster
     @pyqtSlot(QFileInfo)
     def onFileItemActivated(self, file_info):
-        pass
+        Alter.invoke_all('tab_widget_add_tab', self, file_info)
+    
+    def add_tab(self, cls, file_info):
+        self.addTab(cls(file_info, self), file_info.baseName())
     
     def on_menu_button_clicked(self):
         pos = self.mapToGlobal(self.menu_button.pos())

@@ -29,7 +29,7 @@ from .file_system_helper import FileSystemHelper
 
 @Alter.alter('main_window_add_horizontal_widget')
 def add_horizontal_widget(horizontal_widgets, parent):
-    horizontal_widgets.append(Navigation(parent))
+    horizontal_widgets['navigation'] = Navigation(parent)
 
 
 class Navigation(QWidget):
@@ -252,5 +252,5 @@ class Navigation(QWidget):
         if path:
             self.model.setRootPath(path)
             self.tree.setRootIndex(self.model.index(path))
-            self.menu_button.setText(name)
+            self.menu_button.setText(os.path.basename(path))
     
