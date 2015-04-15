@@ -54,4 +54,7 @@ class MainWindow(QMainWindow):
     
     def connect_widgets(self):
         Alter.invoke_all(
-            'connect_widgets', self.vertical_widgets, self.horizontal_widgets)
+            'main_window_connect_widgets', 
+            self.vertical_widgets, 
+            self.horizontal_widgets
+        )
