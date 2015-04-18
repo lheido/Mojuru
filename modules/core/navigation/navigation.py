@@ -60,14 +60,15 @@ class Navigation(QWidget):
         
         self.menu_button = QPushButton('Select directory', self)
         self.menu_button.setFlat(True)
-        self.menu_button.clicked.connect(self.on_menu_button_clicked)
+#        self.menu_button.clicked.connect(self.on_menu_button_clicked)
         self.menu_button.setStyleSheet(
             """
             QPushButton { text-align: center; }
-            QPushButton:focus { outline: none; border: none; }
+            QPushButton:focus { outline: none; }
             """    
         )
         self.menu = QMenu(self)
+        self.menu_button.setMenu(self.menu)
         self.menu_directories = QMenu(self)
         self.menu_directories.setTitle('Directories')
         self.menu_add_action(
@@ -96,8 +97,11 @@ class Navigation(QWidget):
         
         # @ToDo: Alter.invoke_all('add_widget', self.widgets)
         
-        for widget in self.widgets.values():
-            self.layout.addWidget(widget)
+        for name, widget in self.widgets.items():
+            if name == 'menu_button':
+                self.layout.addWidget(widget, 0, Qt.AlignLeft)
+            else:
+                self.layout.addWidget(widget)
         
         self.context_menu = QMenu(self)
         self.add_action('New file', QKeySequence.New, 
