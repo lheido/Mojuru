@@ -45,7 +45,7 @@ class EditorHelper:
         ),
         "HTML": (
             QsciLexerHTML, 
-            ["html","php"]
+            ["html","php", "module", "inc"]
         ), 
         "CSS": (
             QsciLexerCSS,

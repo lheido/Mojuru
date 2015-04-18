@@ -15,6 +15,10 @@ from alter import Alter
 @Alter.alter('main_window_add_horizontal_widget')
 def add_horizontal_widget(horizontal_widgets, parent):
     horizontal_widgets["tab_widget"] = TabWidget(parent)
+    policy = horizontal_widgets["tab_widget"].sizePolicy()
+    # use "maximum" space available horizontally
+    policy.setHorizontalStretch(14)
+    horizontal_widgets["tab_widget"].setSizePolicy(policy)
 
 @Alter.alter('main_window_connect_widgets')
 def connect_widgets(vertical_widgets, horizontal_widgets):
@@ -31,10 +35,29 @@ class TabWidget(QTabWidget):
         super(TabWidget, self).__init__(parent)
         self.setTabsClosable(True)
         self.setMovable(True)
+#        self.setStyleSheet(
+#            """
+#            QTabBar::tab { 
+#                padding-left: 15px;
+#                padding-right: 10px;
+#                padding-top: 10px;
+#                padding-bottom: 10px;
+#                background-color: #424242;
+#                color: #AEAEAE;
+#                border-top-left-radius: 0px;
+#                border-top-right-radius: 20%;
+#            }
+#            QTabBar::close-button {
+#                padding-left: 15px;
+#                subcontrol-position: left;
+#            }
+#            """
+#        )
         
         self.tabCloseRequested.connect(self.on_tab_closed)
         
         self.menu_button = QPushButton('Menu', self)
+        self.menu_button.setFlat(True)
         self.menu_button.clicked.connect(self.on_menu_button_clicked)
         self.menu_button.setObjectName('TabWidgetMenuButton')
         self.menu_button.setToolTip('Menu with useful actions')

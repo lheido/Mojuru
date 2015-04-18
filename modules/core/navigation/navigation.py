@@ -30,6 +30,9 @@ from .file_system_helper import FileSystemHelper
 @Alter.alter('main_window_add_horizontal_widget')
 def add_horizontal_widget(horizontal_widgets, parent):
     horizontal_widgets['navigation'] = Navigation(parent)
+    policy = horizontal_widgets["navigation"].sizePolicy()
+    policy.setHorizontalStretch(1)
+    horizontal_widgets["navigation"].setSizePolicy(policy)
 
 
 class Navigation(QWidget):

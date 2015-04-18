@@ -47,6 +47,7 @@ class EditorWidget(QWidget):
         self.permanent_widget.setLayout(self.h_box)
         
         self.menu_button = QPushButton('Menu', self.permanent_widget)
+        self.menu_button.setFlat(True)
         self.menu_button.clicked.connect(self.on_menu_button_clicked)
         self.h_box.addWidget(self.menu_button)
         

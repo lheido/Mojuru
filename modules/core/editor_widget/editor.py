@@ -15,14 +15,14 @@ class Editor(QsciScintilla):
     def __init__(self, file_info, parent=None):
         super(Editor, self).__init__(parent)
         self.file_info = file_info
+        self.setUtf8(True)
         with open(file_info.absoluteFilePath(), 'r') as f:
-            codec = QTextCodec.codecForName('UTF-8')
-            self.setText(codec.toUnicode(f.read()))
+            text = f.read()
+            self.setText(text)
             self.setModified(False)
         lexer_class = EditorHelper.language_lexer(file_info)
         if lexer_class:
             self.setLexer(lexer_class())
-        self.setUtf8(True)
         self.modificationChanged[bool].connect(self.on_modification_changed)
     
     def on_modification_changed(self, modified):
@@ -30,7 +30,10 @@ class Editor(QsciScintilla):
     
     def save(self, parent):
         if self.isModified():
-            print('@ToDo => save')
+            with open(self.file_info.absoluteFilePath(), 'w') as f:
+                #I don't understand encoding >< but it works
+                b_text = self.text().encode('utf-8')
+                f.write(str(b_text, 'utf-8'))
             self.setModified(False)
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
