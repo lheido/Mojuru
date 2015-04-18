@@ -10,7 +10,8 @@ provide widget with 2 splitter (horizontal|vertical) of QTabWidget
 name = "Tab Widget"
 
 alterations = [
-    'tab_widget_add_tab'
+    'tab_widget_add_tab',
+    'tab_widget_add_action'
 ]
 
 switched_off = False

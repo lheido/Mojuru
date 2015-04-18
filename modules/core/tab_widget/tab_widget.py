@@ -71,7 +71,7 @@ class TabWidget(QTabWidget):
                         TabWidgetHelper.next_tab)
         self.add_action('Previous Tab', QKeySequence.PreviousChild, 
                         TabWidgetHelper.previous_tab)
-        # @ToDO Alter.invoke_all('tab_widget_add_action', self)
+        Alter.invoke_all('tab_widget_add_action', self)
     
     # the function name must be equal to signal name.
     # decorator because reduce the amount of memory used and is slightly faster
@@ -80,7 +80,14 @@ class TabWidget(QTabWidget):
         Alter.invoke_all('tab_widget_add_tab', self, file_info)
     
     def add_tab(self, cls, file_info):
-        index = self.addTab(cls(file_info, self), file_info.baseName())
+        #if file is already open
+        index, i = -1, 0
+        while i < self.count() and index == -1:
+            if self.widget(i).file_info == file_info:
+                index = i
+            i += 1
+        if index == -1:
+            index = self.addTab(cls(file_info, self), file_info.baseName())
         self.setCurrentIndex(index)
     
     def on_menu_button_clicked(self):

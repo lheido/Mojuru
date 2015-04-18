@@ -24,11 +24,13 @@ class EditorWidget(QWidget):
     def __init__(self, file_info, parent=None):
         super(EditorWidget, self).__init__(parent)
         
+        self.file_info = file_info
+        
         self.v_box = QVBoxLayout(self)
         self.v_box.setSpacing(0)
         self.v_box.setContentsMargins(0, 0, 0, 0)
         
-        self.editor = Editor(file_info, self)
+        self.editor = Editor(self.file_info, self)
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
         
