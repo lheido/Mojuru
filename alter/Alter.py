@@ -93,3 +93,12 @@ class Alter:
                 raise NotRegisteredModule(module_name, alter)
         else:
             raise NotRegisteredAlteration(alter)
+    
+    @classmethod
+    def clear(cls):
+        """
+        Reset all functions registered.
+        """
+        for alter in cls.alterations.keys():
+            for module_name in cls.alterations[alter].keys():
+                cls.alterations[alter][module_name].clear()

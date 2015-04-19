@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import importlib
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTextCodec
 from PyQt5.QtWidgets import QWidget
@@ -12,7 +14,9 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QStatusBar
 
 from alter import Alter
-from .editor import Editor
+editor = importlib.import_module('.editor', 'editor_widget')
+editor = importlib.reload(editor)
+Editor = editor.Editor
 
 @Alter.alter('tab_widget_add_tab')
 def open_file(tab_widget, file_info):

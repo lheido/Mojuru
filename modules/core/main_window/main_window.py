@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QSplitter
 
 from alter import Alter
+from alter import ModuleManager
 
 @Alter.alter('mojuru_set_main_window')
 def set_main_window(app):
@@ -22,11 +23,20 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle('Mojuru')
         
+        action = QAction('Reload MainWindow', self)
+        action.setShortcut('ctrl+shift+alt+r')
+        action.triggered.connect(self.reload_central_widget)
+        self.addAction(action)
+        
+        self.vertical_splitter = QSplitter(Qt.Vertical, self)
+        self.setCentralWidget(self.vertical_splitter)
+        self.load_central_widget()
+    
+    def load_central_widget(self):
         self.populate_central_widget()
         self.connect_widgets()
     
     def populate_central_widget(self):
-        self.vertical_splitter = QSplitter(Qt.Vertical, self)
         self.vertical_widgets = collections.OrderedDict()
         
         self.horizontal_splitter = QSplitter(
@@ -49,8 +59,6 @@ class MainWindow(QMainWindow):
         )
         for widget in self.horizontal_widgets.values():
             self.horizontal_splitter.addWidget(widget)
-        
-        self.setCentralWidget(self.vertical_splitter)
     
     def connect_widgets(self):
         Alter.invoke_all(
@@ -58,3 +66,14 @@ class MainWindow(QMainWindow):
             self.vertical_widgets, 
             self.horizontal_widgets
         )
+    
+    def reload_central_widget(self):
+        for index in range(self.vertical_splitter.count()):
+            widget = self.vertical_splitter.widget(index)
+            widget.hide()
+            widget.setParent(None)
+            del widget
+        Alter.clear()
+        ModuleManager.reload_all_modules('core')
+        ModuleManager.reload_all_modules('custom')
+        self.load_central_widget()
