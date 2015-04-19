@@ -25,7 +25,7 @@ class Settings:
     
     @classmethod
     def set_value(cls, name, value, auto_sync=True):
-        if not isinstance(value, []):
+        if not isinstance(value, list):
             cls.settings.setValue(name, value)
         else:
             cls.settings.beginWriteArray(name)
@@ -37,13 +37,13 @@ class Settings:
             cls.sync()
     
     @classmethod
-    def value(cls, name, is_array=False):
+    def value(cls, name, default_value, is_array=False):
         if not is_array:
-            return cls.settings.value(name)
+            return cls.settings.value(name, default_value)
         else:
             result = []
             array_size = cls.settings.beginReadArray(name)
-            for i in xrange(array_size):
+            for i in range(array_size):
                 cls.settings.setArrayIndex(i)
                 result.append(cls.settings.value('{0}-item{1}'.format(name, i)))
             cls.settings.endArray()

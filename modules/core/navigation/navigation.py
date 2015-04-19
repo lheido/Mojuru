@@ -25,6 +25,7 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QMessageBox
 
 from alter import Alter
+from alter import ModuleManager
 from .file_system_helper import FileSystemHelper
 
 @Alter.alter('main_window_add_horizontal_widget')
@@ -49,6 +50,9 @@ class Navigation(QWidget):
     
     """
     
+    SETTINGS_DIRECTORIES = 'navigation_dirs'
+    SETTINGS_CURRENT_DIR = 'navigation_current_dir'
+    
     onFileItemActivated = pyqtSignal(QFileInfo, name="onFileItemActivated")
     onDirItemActivated = pyqtSignal(QFileInfo, name="onDirItemActivated")
     
@@ -64,7 +68,7 @@ class Navigation(QWidget):
         self.menu_button.setStyleSheet(
             """
             QPushButton { text-align: center; }
-            QPushButton:focus { outline: none; }
+            QPushButton:focus { outline: none; border: 1px solid #424242; }
             """    
         )
         self.menu = QMenu(self)
@@ -114,6 +118,19 @@ class Navigation(QWidget):
         self.add_action('Delete', QKeySequence.Delete, 
                         FileSystemHelper.delete)
         # @ToDo Alter.invoke_all('navigation_add_action', self)
+        
+        #restore previous session and data
+        dirs = ModuleManager.core['settings'].Settings.value(
+            self.SETTINGS_DIRECTORIES, None, True)
+        for directory_path in dirs:
+            name = os.path.basename(directory_path)
+            self.menu_add_directory(name, directory_path)
+        current_dir = ModuleManager.core['settings'].Settings.value(
+            self.SETTINGS_CURRENT_DIR, '')
+        if current_dir:
+            for action in self.menu_directories.actions():
+                if action.data() == current_dir:
+                    action.trigger()
     
     def on_menu_button_clicked(self):
         pos = self.mapToGlobal(self.menu_button.pos())
@@ -227,7 +244,7 @@ class Navigation(QWidget):
                 #    model_index, file_info, action, self)
         if len(self.context_menu.actions()) > 0:
             self.context_menu.exec(self.tree.mapToGlobal(point))
-        # reset action data, sinon y a des problème dans _new_function
+        # reset action data, sinon y a des problèmes dans _new_function
         for action in self.context_menu.actions():
             action.setData(None)
     
@@ -251,6 +268,7 @@ class Navigation(QWidget):
         if path:
             name = os.path.basename(path)
             action = self.menu_add_directory(name, path)
+            self.save_directories_path()
             action.trigger()
     
     def on_menu_action_triggered(self):
@@ -260,4 +278,16 @@ class Navigation(QWidget):
             self.model.setRootPath(path)
             self.tree.setRootIndex(self.model.index(path))
             self.menu_button.setText(os.path.basename(path))
+            self.save_current_dir(path)
     
+    def save_directories_path(self):
+        ModuleManager.core['settings'].Settings.set_value(
+            self.SETTINGS_DIRECTORIES,
+            [action.data() for action in self.menu_directories.actions()]    
+        )
+    
+    def save_current_dir(self, path):
+        ModuleManager.core['settings'].Settings.set_value(
+            self.SETTINGS_CURRENT_DIR,
+            path
+        )
