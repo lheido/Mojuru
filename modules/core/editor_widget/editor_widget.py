@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QStatusBar
+from PyQt5.QtWidgets import QLabel
 
 from alter import Alter
 editor = importlib.import_module('.editor', 'editor_widget')
@@ -35,38 +36,43 @@ class EditorWidget(QWidget):
         self.v_box.setSpacing(0)
         self.v_box.setContentsMargins(0, 0, 0, 0)
         
+        self.status_bar = StatusBar(self)
+        
         self.editor = Editor(self.file_info, self)
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
-        
-        self.status_bar = QStatusBar(self)
-        self.status_bar.setSizeGripEnabled(False)
+        self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
         
         self.v_box.addWidget(self.editor)
         self.v_box.addWidget(self.status_bar)
         
         self.setLayout(self.v_box)
         
-        self.permanent_widget = QWidget(self.status_bar)
-        self.h_box = QHBoxLayout(self.permanent_widget)
-        self.h_box.setSpacing(0)
-        self.h_box.setContentsMargins(0, 0, 0, 0)
-        self.permanent_widget.setLayout(self.h_box)
+#        self.permanent_widget = QWidget(self.status_bar)
+#        self.h_box = QHBoxLayout(self.permanent_widget)
+#        self.h_box.setSpacing(0)
+#        self.h_box.setContentsMargins(0, 0, 0, 0)
+#        self.permanent_widget.setLayout(self.h_box)
         
-        prop_icon = QIcon('images/properties.png')
-        self.menu_button = QPushButton('', self.permanent_widget)
-        self.menu_button.setIcon(prop_icon)
-        self.menu_button.setFlat(True)
-        self.menu_button.clicked.connect(self.on_menu_button_clicked)
-        self.h_box.addWidget(self.menu_button)
+#        prop_icon = QIcon('images/properties.png')
+#        self.menu_button = QPushButton('', self.permanent_widget)
+#        self.menu_button.setIcon(prop_icon)
+#        self.menu_button.setFlat(True)
+#        self.menu_button.clicked.connect(self.on_menu_button_clicked)
+#        self.h_box.addWidget(self.menu_button)
         
-        self.status_bar.addPermanentWidget(self.permanent_widget)
+#        self.status_bar.addPermanentWidget(self.permanent_widget)
         
         self.menu = QMenu(self)
         self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
     
     def on_modification_changed(self, modified):
         pass
+    
+    def on_cursor_changed(self, line, index):
+        self.status_bar.showMessage(
+            self.tr("Line {0}, column {1}".format(line, index))
+        )
     
     def on_menu_button_clicked(self):
         pos = self.status_bar.mapToGlobal(self.permanent_widget.pos())
@@ -106,3 +112,16 @@ class EditorWidget(QWidget):
             """
             callback(self)
         return __new_function
+
+
+class StatusBar(QWidget):
+    
+    def __init__(self, parent=None):
+        super(StatusBar, self).__init__(parent)
+        self.label = QLabel('', self)
+        self.h_box = QHBoxLayout(self)
+        self.h_box.addWidget(self.label)
+        self.setLayout(self.h_box)
+    
+    def showMessage(self, message=''):
+        self.label.setText(message)

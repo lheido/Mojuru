@@ -26,7 +26,6 @@ class Editor(QsciScintilla):
         if lexer_class:
             self.setLexer(lexer_class())
         self.modificationChanged[bool].connect(self.on_modification_changed)
-        self.cursorPositionChanged.connect(self.on_cursor_changed)
         self.configure()
     
     def configure(self):
