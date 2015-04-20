@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
@@ -56,7 +57,9 @@ class TabWidget(QTabWidget):
         
         self.tabCloseRequested.connect(self.on_tab_closed)
         
-        self.menu_button = QPushButton('Menu', self)
+        nav_icon = QIcon('images/navigation-menu.png')
+        self.menu_button = QPushButton('', self)
+        self.menu_button.setIcon(nav_icon)
         self.menu_button.setFlat(True)
         self.menu_button.clicked.connect(self.on_menu_button_clicked)
         self.menu_button.setObjectName('TabWidgetMenuButton')

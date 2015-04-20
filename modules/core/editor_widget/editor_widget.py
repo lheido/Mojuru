@@ -5,6 +5,7 @@ import importlib
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTextCodec
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
@@ -52,7 +53,9 @@ class EditorWidget(QWidget):
         self.h_box.setContentsMargins(0, 0, 0, 0)
         self.permanent_widget.setLayout(self.h_box)
         
-        self.menu_button = QPushButton('Menu', self.permanent_widget)
+        prop_icon = QIcon('images/properties.png')
+        self.menu_button = QPushButton('', self.permanent_widget)
+        self.menu_button.setIcon(prop_icon)
         self.menu_button.setFlat(True)
         self.menu_button.clicked.connect(self.on_menu_button_clicked)
         self.h_box.addWidget(self.menu_button)
