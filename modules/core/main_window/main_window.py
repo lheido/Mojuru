@@ -4,6 +4,8 @@
 import collections
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QAction
@@ -19,6 +21,10 @@ def set_main_window(app):
 
 class MainWindow(QMainWindow):
     
+    KEY_WINDOW_SIZE = 'main_window/size'
+    KEY_WINDOW_MAXIMIZED = 'main_window/maximized'
+    KEY_WINDOW_POSITION = 'main_window/position'
+    
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle('Mojuru')
@@ -28,9 +34,38 @@ class MainWindow(QMainWindow):
         action.triggered.connect(self.reload_central_widget)
         self.addAction(action)
         
+        quit_action = QAction('Quit', self)
+        quit_action.setShortcut('ctrl+q')
+        quit_action.triggered.connect(self.on_quit)
+        self.addAction(quit_action)
+        
         self.vertical_splitter = QSplitter(Qt.Vertical, self)
         self.setCentralWidget(self.vertical_splitter)
         self.load_central_widget()
+        
+        size = ModuleManager.core['settings'].Settings.value(
+            self.KEY_WINDOW_SIZE, QSize(600, 400))
+        maximized = ModuleManager.core['settings'].Settings.value(
+            self.KEY_WINDOW_MAXIMIZED, False)
+        position = ModuleManager.core['settings'].Settings.value(
+            self.KEY_WINDOW_POSITION, QPoint(0,0))
+        if maximized == 'true':
+            self.showMaximized()
+        else:
+            self.resize(size)
+            self.move(position)
+    
+    def closeEvent(self, event):
+        self.on_quit()
+    
+    def on_quit(self):
+        ModuleManager.core['settings'].Settings.set_value(
+            self.KEY_WINDOW_SIZE, self.size())
+        ModuleManager.core['settings'].Settings.set_value(
+            self.KEY_WINDOW_MAXIMIZED, self.isMaximized())
+        ModuleManager.core['settings'].Settings.set_value(
+            self.KEY_WINDOW_POSITION, self.pos())
+        self.close()
     
     def load_central_widget(self):
         self.populate_central_widget()
