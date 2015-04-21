@@ -22,18 +22,20 @@ class Editor(QsciScintilla):
             text = f.read()
             self.setText(text)
             self.setModified(False)
-        lexer_class = EditorHelper.language_lexer(file_info)
-        if lexer_class:
-            self.setLexer(lexer_class())
         self.modificationChanged[bool].connect(self.on_modification_changed)
         self.configure()
     
     def configure(self):
         font = QFont()
-        font.setFamily('Ubuntu Mono')
+        font.setFamily('ubuntu mono')
         font.setFixedPitch(True)
-        font.setPointSize(12)
+        font.setPointSize(15)
         self.setFont(font)
+        lexer_class = EditorHelper.language_lexer(self.file_info)
+        if lexer_class:
+            lexer = lexer_class()
+            lexer.setFont(font)
+            self.setLexer(lexer)
         fontmetrics = QFontMetrics(font)
         self.setMarginsFont(font)
         self.setMarginLineNumbers(1, True)
@@ -41,6 +43,7 @@ class Editor(QsciScintilla):
         self.setCaretLineVisible(True)
         self.setIndentationGuides(True)
         self.setIndentationsUseTabs(False)
+        self.setIndentationWidth(4)
         self.setTabWidth(4)
         self.setAutoIndent(True)
         self.setBackspaceUnindents(True)
@@ -63,6 +66,10 @@ class Editor(QsciScintilla):
             parent.status_bar.showMessage(self.tr("Saved file."))
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
+    
+    def zoom_reset(self, parent):
+        #zoom to default font size
+        self.zoomTo(0)
     
     def on_cursor_changed(self, line, index):
         #parent.status_bar.showMessage(

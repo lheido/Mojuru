@@ -5,6 +5,7 @@ import importlib
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTextCodec
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
@@ -42,6 +43,7 @@ class EditorWidget(QWidget):
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
         self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
+        self.editor.setFocus(Qt.OtherFocusReason)
         
         self.v_box.addWidget(self.editor)
         self.v_box.addWidget(self.status_bar)
@@ -65,6 +67,21 @@ class EditorWidget(QWidget):
         
         self.menu = QMenu(self)
         self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
+        self.add_action(
+            self.tr('Zoom in'), 
+            QKeySequence.ZoomIn, 
+            self.editor.zoomIn
+        )
+        self.add_action(
+            self.tr('Zoom out'), 
+            QKeySequence.ZoomOut, 
+            self.editor.zoomOut
+        )
+        self.add_action(
+            self.tr('Zoom reset'), 
+            'ctrl+0',
+            self.editor.zoom_reset
+        )
     
     def on_modification_changed(self, modified):
         pass

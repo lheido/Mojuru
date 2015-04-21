@@ -36,6 +36,7 @@ class TabWidget(QTabWidget):
         super(TabWidget, self).__init__(parent)
         self.setTabsClosable(True)
         self.setMovable(True)
+        self.setFocusPolicy(Qt.NoFocus)
 #        self.setStyleSheet(
 #            """
 #            QTabBar::tab { 
@@ -75,6 +76,12 @@ class TabWidget(QTabWidget):
         self.add_action('Previous Tab', QKeySequence.PreviousChild, 
                         TabWidgetHelper.previous_tab)
         Alter.invoke_all('tab_widget_add_action', self)
+        self.currentChanged[int].connect(self.on_current_changed)
+    
+    def on_current_changed(self, index):
+        if index != -1:
+            self.setFocusProxy(self.widget(index))
+            self.setFocus(True)
     
     # the function name must be equal to signal name.
     # decorator because reduce the amount of memory used and is slightly faster
@@ -92,6 +99,7 @@ class TabWidget(QTabWidget):
         if index == -1:
             index = self.addTab(cls(file_info, self), file_info.baseName())
         self.setCurrentIndex(index)
+        self.setFocus(True)
     
     def on_menu_button_clicked(self):
         pos = self.mapToGlobal(self.menu_button.pos())
