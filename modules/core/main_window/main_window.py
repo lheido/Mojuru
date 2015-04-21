@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
     KEY_WINDOW_SIZE = 'main_window/size'
     KEY_WINDOW_MAXIMIZED = 'main_window/maximized'
     KEY_WINDOW_POSITION = 'main_window/position'
+    KEY_H_SPLITTER_STATE = 'main_window/h_splitter_state'
     
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -58,13 +59,18 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         self.on_quit()
     
-    def on_quit(self):
+    def save_state(self):
         ModuleManager.core['settings'].Settings.set_value(
             self.KEY_WINDOW_SIZE, self.size())
         ModuleManager.core['settings'].Settings.set_value(
             self.KEY_WINDOW_MAXIMIZED, self.isMaximized())
         ModuleManager.core['settings'].Settings.set_value(
             self.KEY_WINDOW_POSITION, self.pos())
+        ModuleManager.core['settings'].Settings.set_value(
+            self.KEY_H_SPLITTER_STATE, self.horizontal_splitter.saveState())
+    
+    def on_quit(self):
+        self.save_state()
         self.close()
     
     def load_central_widget(self):
@@ -94,6 +100,14 @@ class MainWindow(QMainWindow):
         )
         for widget in self.horizontal_widgets.values():
             self.horizontal_splitter.addWidget(widget)
+        
+        #restore horizontal splitter state
+        state = ModuleManager.core['settings'].Settings.value(
+            self.KEY_H_SPLITTER_STATE,
+            None
+        )
+        if state:
+            self.horizontal_splitter.restoreState(state)
     
     def connect_widgets(self):
         Alter.invoke_all(
@@ -103,6 +117,7 @@ class MainWindow(QMainWindow):
         )
     
     def reload_central_widget(self):
+        self.save_state()
         for index in range(self.vertical_splitter.count()):
             widget = self.vertical_splitter.widget(index)
             widget.hide()

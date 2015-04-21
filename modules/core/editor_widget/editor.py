@@ -29,7 +29,7 @@ class Editor(QsciScintilla):
         font = QFont()
         font.setFamily('ubuntu mono')
         font.setFixedPitch(True)
-        font.setPointSize(15)
+        font.setPointSize(12)
         self.setFont(font)
         lexer_class = EditorHelper.language_lexer(self.file_info)
         if lexer_class:
