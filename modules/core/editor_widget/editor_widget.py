@@ -43,7 +43,6 @@ class EditorWidget(QWidget):
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
         self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
-        self.editor.setFocus(Qt.OtherFocusReason)
         
         self.v_box.addWidget(self.editor)
         self.v_box.addWidget(self.status_bar)
@@ -82,6 +81,9 @@ class EditorWidget(QWidget):
             'ctrl+0',
             self.editor.zoom_reset
         )
+        
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setFocusProxy(self.editor)
     
     def on_modification_changed(self, modified):
         pass

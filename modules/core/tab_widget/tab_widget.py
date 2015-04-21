@@ -81,7 +81,7 @@ class TabWidget(QTabWidget):
     def on_current_changed(self, index):
         if index != -1:
             self.setFocusProxy(self.widget(index))
-            self.setFocus(True)
+            self.setFocus(Qt.TabFocusReason)
     
     # the function name must be equal to signal name.
     # decorator because reduce the amount of memory used and is slightly faster
