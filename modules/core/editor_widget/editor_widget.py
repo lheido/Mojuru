@@ -30,6 +30,7 @@ class EditorWidget(QWidget):
     
     def __init__(self, file_info, parent=None):
         super(EditorWidget, self).__init__(parent)
+        self.parent = parent
         
         self.file_info = file_info
         
@@ -86,7 +87,8 @@ class EditorWidget(QWidget):
         self.setFocusProxy(self.editor)
     
     def on_modification_changed(self, modified):
-        pass
+        if self.parent:
+            self.parent.on_current_modified(modified)
     
     def on_cursor_changed(self, line, index):
         self.status_bar.showMessage(

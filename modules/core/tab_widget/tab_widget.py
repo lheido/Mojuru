@@ -56,6 +56,9 @@ class TabWidget(QTabWidget):
 #            """
 #        )
         
+        self.icon_modified = QIcon('images/is-modified.png')
+        self.icon_not_modified = QIcon('images/is-not-modified.png')
+        
         self.tabCloseRequested.connect(self.on_tab_closed)
         
         nav_icon = QIcon('images/navigation-menu.png')
@@ -97,7 +100,11 @@ class TabWidget(QTabWidget):
                 index = i
             i += 1
         if index == -1:
-            index = self.addTab(cls(file_info, self), file_info.baseName())
+            index = self.addTab(
+                cls(file_info, self),
+                self.icon_not_modified,
+                file_info.baseName()
+            )
         self.setCurrentIndex(index)
         self.setFocus(True)
     
@@ -144,6 +151,11 @@ class TabWidget(QTabWidget):
             """
             callback(self)
         return __new_function
+    
+    def on_current_modified(self, modified):
+        icon = self.icon_modified if modified else self.icon_not_modified
+        index = self.currentIndex()
+        self.tabBar().setTabIcon(index, icon)
 
 
 class TabWidgetHelper:
