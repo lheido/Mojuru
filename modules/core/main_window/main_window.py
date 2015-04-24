@@ -30,10 +30,10 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle('Mojuru')
         
-        action = QAction('Reload MainWindow', self)
-        action.setShortcut('ctrl+shift+alt+r')
-        action.triggered.connect(self.reload_central_widget)
-        self.addAction(action)
+        reload_modules_action = QAction('Reload MainWindow', self)
+        reload_modules_action.setShortcut('ctrl+shift+alt+r')
+        reload_modules_action.triggered.connect(self.reload_central_widget)
+        self.addAction(reload_modules_action)
         
         quit_action = QAction('Quit', self)
         quit_action.setShortcut('ctrl+q')
@@ -44,6 +44,17 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.vertical_splitter)
         self.load_central_widget()
         
+        self.file_menu = self.menuBar().addMenu(self.tr('&File'))
+        self.file_menu.addAction(quit_action)
+        self.file_menu.addSeparator()
+        
+        self.module_menu = self.menuBar().addMenu(self.tr('&Modules'))
+        self.module_menu.addAction(reload_modules_action)
+        self.module_menu.addSeparator()
+        
+        Alter.invoke_all('main_window_init', self)
+        
+        #restore main window state
         size = ModuleManager.core['settings'].Settings.value(
             self.KEY_WINDOW_SIZE, QSize(600, 400))
         maximized = ModuleManager.core['settings'].Settings.value(

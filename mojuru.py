@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QLabel #@ToRemove
 
 from alter import Alter, ModuleManager
 
+Alter.register('mojuru_init')
 Alter.register('mojuru_set_main_window')
 
 class Mojuru(QApplication):
@@ -30,6 +31,8 @@ class Mojuru(QApplication):
         
         ModuleManager.load_all('core')
         ModuleManager.load_all('custom')
+        
+        Alter.invoke_all('mojuru_init', self)
     
     def run(self):
         Alter.invoke_all('mojuru_set_main_window', self)

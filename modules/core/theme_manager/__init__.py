@@ -13,3 +13,5 @@ alterations = [
 ]
 
 switched_off = False
+
+weight = 10

@@ -1,0 +1,110 @@
+/* RESET STYLE */
+/*QWidget {
+    background-color: #424242;
+    color: #CECECE;
+}*/
+
+/*QPushButton {
+    padding: 10px;
+}
+
+QPushButton::menu-indicator {
+    subcontrol-position: right center;
+    subcontrol-origin: padding;
+    left: -2px;
+}*/
+
+/** QScrollBar **/
+QScrollBar:horizontal, QScrollBar:vertical {
+	border: none;
+	background: transparent;
+	height: 12px;
+	margin: 0px 0px 0px 0px;
+}
+
+QScrollBar:vertical {
+	height: auto;
+	width: 12px;
+	margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:horizontal, QScrollBar::handle:vertical {
+	background: rgb(84,84,84);
+	min-width: 20px;
+    border-radius: 5%;
+}
+
+QScrollBar::handle:vertical{
+	width: 12px;
+	min-width: 12px;
+	min-height: 20px;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::add-line:vertical {
+	border: none;
+	background: transparent;
+	width: 0px;
+	subcontrol-position: right;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical {
+	width: 0px;
+	height: 0px;
+	subcontrol-position: bottom;
+}
+
+QScrollBar::sub-line:horizontal, QScrollBar::sub-line:vertical {
+	border: none;
+	background: transparent;
+	width: 0px;
+	subcontrol-position: left;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+	width: 0px;
+	height: 0px;
+	subcontrol-position: top;
+}
+
+QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal, QScrollBar:up-arrow:vertical, QScrollBar::down-arrow:vertical {
+	border: none;
+	width: 3px;
+	height: 3px;
+	background: grey;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+
+/** TabWidget Style **/
+QTabWidget::pane {
+    border: none;
+    border-top: 1px solid #424242;
+    border-left: 1px solid #424242;
+}
+
+QTabWidget::tab-bar {
+    
+}
+
+QTabBar::tab {
+    margin-top: 3px;
+    padding: 5px 10px;
+    background-color: #424242;
+    color: #CECECE;
+    border-top-left-radius: 0%;
+    border-top-right-radius: 0%;
+}
+
+QTabBar::tab:!selected {
+    background-color: transparent;
+    color: #424242;
+}
+
+QTabWidget::tab QsciScintilla {
+    border: none;
+}
