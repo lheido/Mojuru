@@ -92,7 +92,7 @@ class EditorWidget(QWidget):
     
     def on_cursor_changed(self, line, index):
         self.status_bar.showMessage(
-            self.tr("Line {0}, column {1}".format(line, index))
+            self.tr("Line {0}, column {1}".format(line + 1, index))
         )
     
     def on_menu_button_clicked(self):
