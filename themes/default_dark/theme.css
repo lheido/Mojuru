@@ -68,14 +68,16 @@ QScrollBar::sub-line:vertical {
 	subcontrol-position: top;
 }
 
-QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal, QScrollBar:up-arrow:vertical, QScrollBar::down-arrow:vertical {
+QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal, 
+QScrollBar:up-arrow:vertical, QScrollBar::down-arrow:vertical {
 	border: none;
 	width: 3px;
 	height: 3px;
 	background: grey;
 }
 
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, 
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 	background: none;
 }
 
@@ -87,10 +89,6 @@ QTabWidget::pane {
     border-left: 1px solid #424242;
 }
 
-QTabWidget::tab-bar {
-    
-}
-
 QTabBar::tab {
     margin-top: 3px;
     padding: 5px 10px;
@@ -100,11 +98,49 @@ QTabBar::tab {
     border-top-right-radius: 0%;
 }
 
+/*QTabBar::tab:first {
+    border-top-left-radius: 5px;
+}
+
+QTabBar::tab:last {
+    border-top-right-radius: 5px;
+}*/
+
 QTabBar::tab:!selected {
-    background-color: transparent;
+    background-color: #b6b6b6;
+    border-top: 1px solid #848484;
+    border-right: 1px solid #848484;
     color: #424242;
+}
+
+QTabBar::tab:first:!selected {
+    /*border-top-left-radius: 5px;*/
+    border-left: 1px solid #848484;
+    border-right: 1px solid #848484;
 }
 
 QTabWidget::tab QsciScintilla {
     border: none;
+    background-color: transparent;
+}
+
+/*QTabBar::close-button:!selected {
+    border: none;
+}
+
+QTabBar::close-button:hover {
+    border: 1px solid red;
+}*/
+
+/** QTreeView Style **/
+QTreeView {
+    border-top: 1px solid #848484;
+    border-right: 1px solid #848484;
+    padding-top: 10px;
+    /*border-top-right-radius: 5px;*/
+    background-color: #CBCBCB;
+}
+
+QMainWindow {
+    background-color: #D6D6D6;
 }

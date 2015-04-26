@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtWidgets import QMenu
 from PyQt5.Qsci import QsciScintilla
 
 from .editor_helper import EditorHelper
@@ -24,6 +25,15 @@ class Editor(QsciScintilla):
             self.setModified(False)
         self.modificationChanged[bool].connect(self.on_modification_changed)
         self.configure()
+        
+        #self.context_menu = QMenu(self)
+        #self.context_menu.addAction('test')
+        #self.context_menu.addAction('plop')
+        #self.setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.customContextMenuRequested.connect(self.on_context_menu)
+    
+    #def on_context_menu(self, point):
+        #self.context_menu.exec(self.mapToGlobal(point))
     
     def configure(self):
         font = QFont()
