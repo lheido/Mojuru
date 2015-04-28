@@ -29,7 +29,7 @@ QScrollBar:vertical {
 }
 
 QScrollBar::handle:horizontal, QScrollBar::handle:vertical {
-	background: rgb(84,84,84);
+	background: #848484;
 	min-width: 20px;
     border-radius: 5%;
 }
@@ -85,43 +85,59 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 /** TabWidget Style **/
 QTabWidget::pane {
     border: none;
-    border-top: 1px solid #424242;
-    border-left: 1px solid #424242;
+    border-top: 2px solid #232323;
+    /*border-left: 1px solid #232323;*/
 }
 
 QTabBar::tab {
-    margin-top: 3px;
+    margin-top: 6px;
     padding: 5px 10px;
-    background-color: #424242;
+    background-color: #232323;
     color: #CECECE;
     border-top-left-radius: 0%;
     border-top-right-radius: 0%;
 }
 
-/*QTabBar::tab:first {
+QTabBar::tab:first {
     border-top-left-radius: 5px;
 }
 
 QTabBar::tab:last {
     border-top-right-radius: 5px;
-}*/
+}
+
+QTabBar::tab:only-one {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
 
 QTabBar::tab:!selected {
-    background-color: #b6b6b6;
-    border-top: 1px solid #848484;
+    background-color: #848484;
+    /*border-top: 1px solid #848484;
     border-right: 1px solid #848484;
-    color: #424242;
+    border-left: 1px solid #848484;*/
+    border: none;
+    color: #232323;
+}
+
+QTabBar::tab:!selected:hover {
+    background-color: #565656;
+    color: #CBCBCB;
 }
 
 QTabBar::tab:first:!selected {
-    /*border-top-left-radius: 5px;*/
-    border-left: 1px solid #848484;
-    border-right: 1px solid #848484;
+    border-top-left-radius: 5px;
+    /*border-left: 1px solid #848484;
+    border-right: 1px solid #848484;*/
 }
 
 QTabWidget::tab QsciScintilla {
     border: none;
     background-color: transparent;
+}
+
+QTabWidget::tab QLabel {
+    color: #CECECE;
 }
 
 /*QTabBar::close-button:!selected {
@@ -134,13 +150,15 @@ QTabBar::close-button:hover {
 
 /** QTreeView Style **/
 QTreeView {
-    border-top: 1px solid #848484;
-    border-right: 1px solid #848484;
+    /*border-top: 1px solid #232323;
+    border-right: 1px solid #232323;*/
+    border: none;
     padding-top: 10px;
-    /*border-top-right-radius: 5px;*/
-    background-color: #CBCBCB;
+    border-top-right-radius: 5px;
+    background-color: #565656;
+    color: #CECECE;
 }
 
 QMainWindow {
-    background-color: #D6D6D6;
+    background-color: #424242;
 }
