@@ -8,6 +8,7 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QMenu
 from PyQt5.Qsci import QsciScintilla
 
+from alter import ModuleManager
 from .editor_helper import EditorHelper
 
 
@@ -44,6 +45,8 @@ class Editor(QsciScintilla):
         lexer_class = EditorHelper.language_lexer(self.file_info)
         if lexer_class:
             lexer = lexer_class()
+            ModuleManager.core['theme_manager'].ThemeManager.set_editor_theme(
+                self, lexer)
             lexer.setFont(font)
             self.setLexer(lexer)
         fontmetrics = QFontMetrics(font)

@@ -65,7 +65,7 @@ class EditorHelper:
         ), 
         "JavaScript": (
             QsciLexerJavaScript,
-            ["js"]
+            ["js", "json"]
         ),
         "Lua": (
             QsciLexerLua,

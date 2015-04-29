@@ -8,6 +8,7 @@ import json
 import pkg_resources
 
 from PyQt5.QtCore import QFileInfo
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 
@@ -59,6 +60,38 @@ class ThemeManager:
         application.setStyleSheet(theme.style_sheet)
     
     @classmethod
+    def set_editor_theme(cls, editor, lexer):
+        theme_name = cls.get_active_theme()
+        theme = ModuleTheme(theme_name)
+        for elt, value in theme.editor_theme.items():
+            color = QColor(value) if value[0] == '#' else None
+            if elt == 'Paper':
+                lexer.setPaper(color)
+            elif elt == 'DefaultPaper':
+                lexer.setDefaultPaper(color)
+            elif elt == 'MarginsBackground':
+                editor.setMarginsBackgroundColor(color)
+            elif elt == 'MarginsForeground':
+                editor.setMarginsForegroundColor(color)
+            elif elt == 'FoldMargin':
+                editor.setFoldMarginColors(color, color)
+            elif elt == 'CaretLineBackground':
+                editor.setCaretLineBackgroundColor(color)
+            elif elt == 'CaretForeground':
+                editor.setCaretForegroundColor(color)
+            elif 'KeywordsEnsemble' in elt:
+                lexer.keys_ens = value
+                def wrapper():
+                    def keywords(ens):
+                        return lexer.keys_ens[ens]
+                    return keywords
+                setattr(lexer, 'keywords', wrapper())
+            elif hasattr(lexer, elt):
+                lexer.setColor(color, getattr(lexer, elt))
+            else:
+                pass
+    
+    @classmethod
     def save_active_theme(cls, theme):
         ModuleManager.core['settings'].Settings.set_value(
             cls.KEY_ACTIVE_THEME, theme)
@@ -76,7 +109,7 @@ class ThemeManager:
                     if action.data() != theme.name:
                         action.setChecked(False)
         return on_changed
-
+    
 
 class ModuleTheme:
     
