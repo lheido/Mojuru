@@ -80,12 +80,13 @@ class ThemeManager:
             elif elt == 'CaretForeground':
                 editor.setCaretForegroundColor(color)
             elif 'KeywordsEnsemble' in elt:
-                lexer.keys_ens = value
-                def wrapper():
-                    def keywords(ens):
-                        return lexer.keys_ens[ens]
-                    return keywords
-                setattr(lexer, 'keywords', wrapper())
+                if editor.lang in elt:
+                    lexer.keys_ens = value
+                    def wrapper():
+                        def keywords(ens):
+                            return lexer.keys_ens[ens]
+                        return keywords
+                    setattr(lexer, 'keywords', wrapper())
             elif hasattr(lexer, elt):
                 lexer.setColor(color, getattr(lexer, elt))
             else:

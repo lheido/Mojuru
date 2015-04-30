@@ -58,6 +58,8 @@ class Navigation(QWidget):
     
     def __init__(self, parent=None):
         super(Navigation, self).__init__(parent)
+        self.setObjectName("Navigation")
+        
         self.layout = QVBoxLayout(self)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0,0,0,0)

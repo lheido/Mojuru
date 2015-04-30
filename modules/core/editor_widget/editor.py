@@ -19,6 +19,7 @@ class Editor(QsciScintilla):
     def __init__(self, file_info, parent=None):
         super(Editor, self).__init__(parent)
         self.file_info = file_info
+        self.lang = EditorHelper.lang_from_file_info(file_info)
         self.setUtf8(True)
         with open(file_info.absoluteFilePath(), 'r') as f:
             text = f.read()

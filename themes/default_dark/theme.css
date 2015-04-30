@@ -1,8 +1,7 @@
 /* RESET STYLE */
-/*QWidget {
-    background-color: #424242;
+QWidget {
     color: #CECECE;
-}*/
+}
 
 /*QPushButton {
     padding: 10px;
@@ -17,7 +16,7 @@ QPushButton::menu-indicator {
 /** QScrollBar **/
 QScrollBar:horizontal, QScrollBar:vertical {
 	border: none;
-	background: transparent;
+	background: #232323;
 	height: 12px;
 	margin: 0px 0px 0px 0px;
 }
@@ -133,7 +132,7 @@ QTabBar::tab:first:!selected {
 
 QTabWidget::tab QsciScintilla {
     border: none;
-    background-color: transparent;
+    background-color: #232323;
 }
 
 QTabWidget::tab QLabel {
@@ -147,6 +146,10 @@ QTabWidget::tab QLabel {
 QTabBar::close-button:hover {
     border: 1px solid red;
 }*/
+
+#Navigation QPushButton {
+    padding: 8px;
+}
 
 /** QTreeView Style **/
 QTreeView {

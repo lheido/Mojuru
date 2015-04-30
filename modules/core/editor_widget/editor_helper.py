@@ -126,6 +126,14 @@ class EditorHelper:
     }
     
     @classmethod
+    def lang_from_file_info(cls, file_info):
+        suffix = file_info.suffix()
+        for language, info in cls.language_helper.items():
+            if suffix in info[1]:
+                return language
+        return None
+    
+    @classmethod
     def language_lexer(cls, file_info):
         suffix = file_info.suffix()
         for language, info in cls.language_helper.items():
