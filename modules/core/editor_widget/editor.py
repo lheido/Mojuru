@@ -8,6 +8,7 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QMenu
 from PyQt5.Qsci import QsciScintilla
 
+from alter import Alter
 from alter import ModuleManager
 from .editor_helper import EditorHelper
 
@@ -26,6 +27,9 @@ class Editor(QsciScintilla):
             self.setText(text)
             self.setModified(False)
         self.modificationChanged[bool].connect(self.on_modification_changed)
+        
+        Alter.invoke_all('editor_init', self)
+        
         self.configure()
         
         #self.context_menu = QMenu(self)
@@ -66,11 +70,14 @@ class Editor(QsciScintilla):
         self.setEdgeColumn(79)
         self.setEdgeColor(QColor('#424242'))
         self.setEdgeMode(QsciScintilla.EdgeLine)
+        
+        Alter.invoke_all('editor_configure', self)
     
     def on_modification_changed(self, modified):
         pass
     
     def save(self, parent):
+        Alter.invoke_all('editor_presave', self)
         if self.isModified():
             with open(self.file_info.absoluteFilePath(), 'w') as f:
                 #I don't understand encoding >< but it works
@@ -78,6 +85,7 @@ class Editor(QsciScintilla):
                 f.write(str(b_text, 'utf-8'))
             self.setModified(False)
             parent.status_bar.showMessage(self.tr("Saved file."))
+            Alter.invoke_all('editor_save', self)
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
     

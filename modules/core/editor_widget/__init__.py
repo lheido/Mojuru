@@ -8,7 +8,13 @@ Editor widget based on QSciScintilla widget
 
 name = "Editor Widget"
 
-alterations = []
+alterations = [
+    'editor_widget_init',
+    'editor_init',
+    'editor_configure',
+    'editor_presave',
+    'editor_save'
+]
 
 switched_off = False
 

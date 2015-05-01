@@ -50,6 +50,8 @@ class EditorWidget(QWidget):
         
         self.setLayout(self.v_box)
         
+        Alter.invoke_all('editor_widget_init', self)
+        
 #        self.permanent_widget = QWidget(self.status_bar)
 #        self.h_box = QHBoxLayout(self.permanent_widget)
 #        self.h_box.setSpacing(0)
