@@ -65,11 +65,7 @@ class ThemeManager:
         theme = ModuleTheme(theme_name)
         for elt, value in theme.editor_theme.items():
             color = QColor(value) if value[0] == '#' else None
-            if elt == 'Paper':
-                lexer.setPaper(color)
-            elif elt == 'DefaultPaper':
-                lexer.setDefaultPaper(color)
-            elif elt == 'MarginsBackground':
+            if elt == 'MarginsBackground':
                 editor.setMarginsBackgroundColor(color)
             elif elt == 'MarginsForeground':
                 editor.setMarginsForegroundColor(color)
@@ -79,18 +75,23 @@ class ThemeManager:
                 editor.setCaretLineBackgroundColor(color)
             elif elt == 'CaretForeground':
                 editor.setCaretForegroundColor(color)
-            elif 'KeywordsEnsemble' in elt:
-                if editor.lang in elt:
-                    lexer.keys_ens = value
-                    def wrapper():
-                        def keywords(ens):
-                            return lexer.keys_ens[ens]
-                        return keywords
-                    setattr(lexer, 'keywords', wrapper())
-            elif hasattr(lexer, elt):
-                lexer.setColor(color, getattr(lexer, elt))
-            else:
-                pass
+            elif elt == 'Paper':
+                lexer.setPaper(color) if lexer else editor.setPaper(color)
+            if lexer:
+                if elt == 'DefaultPaper':
+                    lexer.setDefaultPaper(color)
+                elif 'KeywordsEnsemble' in elt:
+                    if editor.lang in elt:
+                        lexer.keys_ens = value
+                        def wrapper():
+                            def keywords(ens):
+                                return lexer.keys_ens[ens]
+                            return keywords
+                        setattr(lexer, 'keywords', wrapper())
+                elif hasattr(lexer, elt):
+                    lexer.setColor(color, getattr(lexer, elt))
+            if not lexer and elt == 'Default':
+                editor.setColor(color)
     
     @classmethod
     def save_active_theme(cls, theme):

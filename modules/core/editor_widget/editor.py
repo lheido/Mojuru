@@ -48,12 +48,15 @@ class Editor(QsciScintilla):
         font.setPointSize(12)
         self.setFont(font)
         lexer_class = EditorHelper.language_lexer(self.file_info)
-        if lexer_class:
-            lexer = lexer_class()
-            ModuleManager.core['theme_manager'].ThemeManager.set_editor_theme(
-                self, lexer)
-            lexer.setFont(font)
-            self.setLexer(lexer)
+        
+        self.lang_lexer = lexer_class() if lexer_class else None
+        ModuleManager.core['theme_manager'].ThemeManager.set_editor_theme(
+            self, self.lang_lexer)
+        
+        if self.lang_lexer:
+            self.lang_lexer.setFont(font)
+            self.setLexer(self.lang_lexer)
+        
         fontmetrics = QFontMetrics(font)
         self.setMarginsFont(font)
         self.setMarginLineNumbers(1, True)
