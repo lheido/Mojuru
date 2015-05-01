@@ -37,24 +37,6 @@ class TabWidget(QTabWidget):
         self.setTabsClosable(True)
         self.setMovable(True)
         self.setFocusPolicy(Qt.NoFocus)
-#        self.setStyleSheet(
-#            """
-#            QTabBar::tab { 
-#                padding-left: 15px;
-#                padding-right: 10px;
-#                padding-top: 10px;
-#                padding-bottom: 10px;
-#                background-color: #424242;
-#                color: #AEAEAE;
-#                border-top-left-radius: 0px;
-#                border-top-right-radius: 20%;
-#            }
-#            QTabBar::close-button {
-#                padding-left: 15px;
-#                subcontrol-position: left;
-#            }
-#            """
-#        )
         
         self.icon_modified = QIcon('images/is-modified.png')
         self.icon_not_modified = QIcon('images/is-not-modified.png')
@@ -103,7 +85,7 @@ class TabWidget(QTabWidget):
             index = self.addTab(
                 cls(file_info, self),
                 self.icon_not_modified,
-                file_info.baseName()
+                file_info.fileName()
             )
         self.setCurrentIndex(index)
         self.setFocus(True)
