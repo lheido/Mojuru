@@ -9,7 +9,6 @@ import os.path
 
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QLabel #@ToRemove
 
 from alter import Alter, ModuleManager
 
@@ -37,7 +36,7 @@ class Mojuru(QApplication):
     def run(self):
         Alter.invoke_all('mojuru_set_main_window', self)
         print(self.exec_())
+        
 
 if __name__ == "__main__":
-    import sys
     Mojuru(sys.argv).run()

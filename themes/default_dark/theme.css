@@ -91,6 +91,7 @@ QTabWidget::pane {
 QTabBar::tab {
     margin-top: 6px;
     padding: 5px 10px;
+    padding-top: 10px;
     background-color: #232323;
     color: #CECECE;
     border-top-left-radius: 0%;
@@ -139,13 +140,18 @@ QTabWidget::tab QLabel {
     color: #CECECE;
 }
 
-/*QTabBar::close-button:!selected {
-    border: none;
+QTabBar::close-button {
+    image: url(images/close.png);
+    padding-top: 10px;
+}
+
+QTabBar::close-button:!selected {
+    image: none;
 }
 
 QTabBar::close-button:hover {
-    border: 1px solid red;
-}*/
+    image: url(images/close-hover.png);
+}
 
 #Navigation QPushButton {
     padding: 8px;
