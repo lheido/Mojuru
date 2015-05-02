@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import QStatusBar
 from PyQt5.QtWidgets import QLabel
 
 from alter import Alter
+from alter import ModuleManager
+
 editor = importlib.import_module('.editor', 'editor_widget')
 editor = importlib.reload(editor)
 Editor = editor.Editor
@@ -50,22 +52,8 @@ class EditorWidget(QWidget):
         
         self.setLayout(self.v_box)
         
-        Alter.invoke_all('editor_widget_init', self)
-        
-#        self.permanent_widget = QWidget(self.status_bar)
-#        self.h_box = QHBoxLayout(self.permanent_widget)
-#        self.h_box.setSpacing(0)
-#        self.h_box.setContentsMargins(0, 0, 0, 0)
-#        self.permanent_widget.setLayout(self.h_box)
-        
-#        prop_icon = QIcon('images/properties.png')
-#        self.menu_button = QPushButton('', self.permanent_widget)
-#        self.menu_button.setIcon(prop_icon)
-#        self.menu_button.setFlat(True)
-#        self.menu_button.clicked.connect(self.on_menu_button_clicked)
-#        self.h_box.addWidget(self.menu_button)
-        
-#        self.status_bar.addPermanentWidget(self.permanent_widget)
+        self.status_bar.menu_button.clicked.connect(
+            self.on_menu_button_clicked)
         
         self.menu = QMenu(self)
         self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
@@ -87,6 +75,8 @@ class EditorWidget(QWidget):
         
         self.setFocusPolicy(Qt.NoFocus)
         self.setFocusProxy(self.editor)
+        
+        Alter.invoke_all('editor_widget_init', self)
     
     def on_modification_changed(self, modified):
         if self.parent:
@@ -98,12 +88,12 @@ class EditorWidget(QWidget):
         )
     
     def on_menu_button_clicked(self):
-        pos = self.status_bar.mapToGlobal(self.permanent_widget.pos())
+        pos = self.status_bar.mapToGlobal(self.status_bar.menu_button.pos())
         menu_size = self.menu.sizeHint()
         menu_height = menu_size.height()
         menu_width = menu_size.width()
         pos.setY(pos.y() - menu_height)
-        pos.setX(pos.x() - menu_width + self.permanent_widget.width())
+        pos.setX(pos.x() - menu_width + self.status_bar.menu_button.width())
         if len(self.menu.actions()) > 0:
             self.menu.exec(pos)
     
@@ -142,8 +132,12 @@ class StatusBar(QWidget):
     def __init__(self, parent=None):
         super(StatusBar, self).__init__(parent)
         self.label = QLabel('', self)
+        self.menu_button = QPushButton('', self)
+        self.menu_button.setIcon(QIcon('images/properties.png'))
+        self.menu_button.setFlat(True)
         self.h_box = QHBoxLayout(self)
         self.h_box.addWidget(self.label)
+        self.h_box.addWidget(self.menu_button, 1, Qt.AlignRight)
         self.setLayout(self.h_box)
     
     def showMessage(self, message=''):
