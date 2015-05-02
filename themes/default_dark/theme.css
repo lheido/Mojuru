@@ -3,6 +3,10 @@ QWidget {
     color: #CECECE;
 }
 
+QWidget:focus {
+    border: 1px solid #6dd7ae;
+}
+
 /*QPushButton {
     padding: 10px;
 }
@@ -155,6 +159,10 @@ QTabBar::close-button:hover {
 
 #Navigation QPushButton {
     padding: 8px;
+}
+
+#Navigation QPushButton::menu-indicator {
+    subcontrol-position: right middle;
 }
 
 /** QTreeView Style **/
