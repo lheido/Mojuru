@@ -15,7 +15,7 @@
     "TripleSingleQuotedString": "#A6E22E",
     "TripleDoubleQuotedString": "#A6E22E",
     "ClassName": "#F8F8F2",
-    "FunctionMethodName": "#A6E22E",
+    "FunctionMethodName": "#F8F8F2",
     "Operator": "#F92672",
     "Identifier": "#CBCBCB",
     "CommentBlock": "#F92672",
@@ -24,7 +24,7 @@
     "Decorator": "#AE81FF",
     "PythonKeywordsEnsemble": [
         "",
-        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda None not or pass print raise return try while with yield self cls",
+        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda None not or pass print raise return try while with yield self cls True False",
         "",
         "",
         "",

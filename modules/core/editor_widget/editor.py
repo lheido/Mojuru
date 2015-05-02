@@ -79,7 +79,7 @@ class Editor(QsciScintilla):
     def on_modification_changed(self, modified):
         pass
     
-    def save(self, parent):
+    def save(self, parent, action=None):
         Alter.invoke_all('editor_presave', self)
         if self.isModified():
             with open(self.file_info.absoluteFilePath(), 'w') as f:
@@ -92,7 +92,7 @@ class Editor(QsciScintilla):
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
     
-    def zoom_reset(self, parent):
+    def zoom_reset(self, parent, action):
         #zoom to default font size
         self.zoomTo(0)
     
@@ -100,3 +100,26 @@ class Editor(QsciScintilla):
         #parent.status_bar.showMessage(
         #    self.tr("Line {line}, column {index}".format(line, index)))
         pass
+    
+    def keyPressEvent(self, event):
+        line, index = self.getCursorPosition()
+        auto_close_enabled = ModuleManager.core['settings'].Settings.value(
+                EditorHelper.SETTINGS_AUTO_CLOSE_BRACKETS,
+                'true'
+            )
+        brackets_quotes = EditorHelper.brakets_quotes_array()
+        if auto_close_enabled == 'true' and event.text() in brackets_quotes:
+            self.insertAt(brackets_quotes[event.text()], line, index)
+            super(Editor, self).keyPressEvent(event)
+        elif event.key() == Qt.Key_Backspace:
+            at_right = self.text(line)[index]
+            at_left = self.text(line)[index-1]
+            if at_left in brackets_quotes:
+                if brackets_quotes[at_left] == at_right:
+                    self.setSelection(line, index, line, index+1)
+                    self.replaceSelectedText('')
+            super(Editor, self).keyPressEvent(event)
+        else:
+            super(Editor, self).keyPressEvent(event)
+    
+    

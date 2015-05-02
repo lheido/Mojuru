@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QLabel
 
 from alter import Alter
 from alter import ModuleManager
+from .editor_helper import EditorHelper
 
 editor = importlib.import_module('.editor', 'editor_widget')
 editor = importlib.reload(editor)
@@ -57,20 +58,34 @@ class EditorWidget(QWidget):
         
         self.menu = QMenu(self)
         self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
+        self.add_separator()
         self.add_action(
             self.tr('Zoom in'), 
             QKeySequence.ZoomIn, 
-            self.editor.zoomIn
+            self.editor.zoomIn,
+            wrapped=False
         )
         self.add_action(
             self.tr('Zoom out'), 
             QKeySequence.ZoomOut, 
-            self.editor.zoomOut
+            self.editor.zoomOut,
+            wrapped=False
         )
         self.add_action(
             self.tr('Zoom reset'), 
             'ctrl+0',
             self.editor.zoom_reset
+        )
+        self.add_separator()
+        self.add_action(
+            self.tr('Auto close brackets and quotes'),
+            'ctrl+alt+a',
+            EditorHelper.auto_close_brackets_quotes,
+            checkable=True,
+            checked=ModuleManager.core['settings'].Settings.value(
+                EditorHelper.SETTINGS_AUTO_CLOSE_BRACKETS,
+                'true'
+            )
         )
         
         self.setFocusPolicy(Qt.NoFocus)
@@ -97,18 +112,31 @@ class EditorWidget(QWidget):
         if len(self.menu.actions()) > 0:
             self.menu.exec(pos)
     
-    def add_action(self, name, shortcut, callback, icon = None):
+    def add_action(self, name, shortcut, callback, **kwargs):
         """
         Ajoute une action au context menu et au widget navigation lui même.
         Créer une fonction à la volé pour fournir des arguments aux fonctions
         associé aux actions.
         """
         action = QAction(name, self)
-        if icon:
-            action.setIcon(icon)
+        if 'icon' in kwargs:
+            action.setIcon(kwargs['icon'])
+        if 'checkable' in kwargs and kwargs['checkable']:
+            action.setCheckable(True)
+            if 'checked' in kwargs:
+                checked = True if kwargs['checked'] == 'true' else False
+                action.setChecked(
+                    checked
+                )
+        
         action.setShortcut(shortcut)
         action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
-        action.triggered.connect(self.__wrapper(callback))
+        
+        if 'wrapped' in kwargs and kwargs['wrapped'] is False:
+            action.triggered.connect(callback)
+        else:
+            action.triggered.connect(self.__wrapper(callback))
+        
         self.addAction(action)
         self.menu.addAction(action)
         
@@ -123,7 +151,8 @@ class EditorWidget(QWidget):
             à une action pour pouvoir utiliser les raccourcis en même temps que
             le menu contextuel.
             """
-            callback(self)
+            action = self.sender()
+            callback(self, action)
         return __new_function
 
 

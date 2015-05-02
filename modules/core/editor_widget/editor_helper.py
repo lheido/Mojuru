@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+from PyQt5.QtCore import Qt
 from PyQt5.Qsci import QsciLexerPython
 from PyQt5.Qsci import QsciLexerBash
 from PyQt5.Qsci import QsciLexerCMake
@@ -30,6 +31,8 @@ from PyQt5.Qsci import QsciLexerTeX
 from PyQt5.Qsci import QsciLexerVerilog
 from PyQt5.Qsci import QsciLexerVHDL
 from PyQt5.Qsci import QsciLexerYAML
+
+from alter import ModuleManager
 
 
 class EditorHelper:
@@ -125,6 +128,8 @@ class EditorHelper:
         )
     }
     
+    SETTINGS_AUTO_CLOSE_BRACKETS = 'editor_helper_auto_close_brackets'
+    
     @classmethod
     def lang_from_file_info(cls, file_info):
         suffix = file_info.suffix()
@@ -140,3 +145,24 @@ class EditorHelper:
             if suffix in info[1]:
                 return cls.language_helper[language][0]
         return None
+    
+    @classmethod
+    def auto_close_brackets_quotes(cls, editor_widget, action):
+        ModuleManager.core['settings'].Settings.set_value(
+            cls.SETTINGS_AUTO_CLOSE_BRACKETS,
+            action.isChecked()
+        )
+    
+    @classmethod
+    def brakets_quotes_array(cls):
+        #return [
+        #    Qt.Key_QuoteDbl, Qt.Key_Apostrophe, Qt.Key_BraceLeft, 
+        #    Qt.Key_ParenLeft
+        #]
+        return {
+            "'": "'", 
+            '"': '"', 
+            "(": ")", 
+            "{": "}",
+            "[": "]"
+        }
