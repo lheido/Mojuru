@@ -13,7 +13,8 @@ alterations = [
     'editor_init',
     'editor_configure',
     'editor_presave',
-    'editor_save'
+    'editor_save',
+    'editor_key_presse_event'
 ]
 
 switched_off = False

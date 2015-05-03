@@ -103,6 +103,14 @@ class Editor(QsciScintilla):
     
     def keyPressEvent(self, event):
         line, index = self.getCursorPosition()
+        self.auto_close_event(event, line, index)
+        #invoke other modules
+        Alter.invoke_all('editor_key_presse_event', self, line, index)
+        
+        #do not avoid default key press event
+        super(Editor, self).keyPressEvent(event)
+    
+    def auto_close_event(self, event, line, index):
         auto_close_enabled = ModuleManager.core['settings'].Settings.value(
                 EditorHelper.SETTINGS_AUTO_CLOSE_BRACKETS,
                 'true'
@@ -110,16 +118,11 @@ class Editor(QsciScintilla):
         brackets_quotes = EditorHelper.brakets_quotes_array()
         if auto_close_enabled == 'true' and event.text() in brackets_quotes:
             self.insertAt(brackets_quotes[event.text()], line, index)
-            super(Editor, self).keyPressEvent(event)
-        elif event.key() == Qt.Key_Backspace:
+        if event.key() == Qt.Key_Backspace:
             at_right = self.text(line)[index]
             at_left = self.text(line)[index-1]
             if at_left in brackets_quotes:
                 if brackets_quotes[at_left] == at_right:
                     self.setSelection(line, index, line, index+1)
                     self.replaceSelectedText('')
-            super(Editor, self).keyPressEvent(event)
-        else:
-            super(Editor, self).keyPressEvent(event)
-    
     
