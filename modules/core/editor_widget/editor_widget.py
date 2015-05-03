@@ -165,6 +165,7 @@ class StatusBar(QWidget):
         self.menu_button.setIcon(QIcon('images/properties.png'))
         self.menu_button.setFlat(True)
         self.h_box = QHBoxLayout(self)
+        self.h_box.setSpacing(0)
         self.h_box.addWidget(self.label)
         self.h_box.addWidget(self.menu_button, 1, Qt.AlignRight)
         self.setLayout(self.h_box)

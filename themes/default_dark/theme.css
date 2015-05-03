@@ -21,20 +21,20 @@ QPushButton::menu-indicator {
 QScrollBar:horizontal, QScrollBar:vertical {
 	border: none;
 	background: #232323;
-	height: 12px;
+	height: 9px;
 	margin: 0px 0px 0px 0px;
 }
 
 QScrollBar:vertical {
 	height: auto;
-	width: 12px;
+	width: 9px;
 	margin: 0px 0px 0px 0px;
 }
 
 QScrollBar::handle:horizontal, QScrollBar::handle:vertical {
 	background: #848484;
 	min-width: 20px;
-    border-radius: 5%;
+    border-radius: 4%;
 }
 
 QScrollBar::handle:vertical{
@@ -138,6 +138,14 @@ QTabBar::tab:first:!selected {
 QTabWidget::tab QsciScintilla {
     border: none;
     background-color: #232323;
+}
+
+QTabWidget::tab QWidget {
+    background-color: #232323;
+}
+
+QTabWidget::tab QTabBar {
+    background-color: transparent;
 }
 
 QTabWidget::tab QLabel {
