@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QMenu
 from PyQt5.Qsci import QsciScintilla
@@ -103,21 +105,34 @@ class Editor(QsciScintilla):
     
     def keyPressEvent(self, event):
         line, index = self.getCursorPosition()
-        self.auto_close_event(event, line, index)
+        events = [event]
+        self.auto_close_event(events, line, index)
         #invoke other modules
-        Alter.invoke_all('editor_key_presse_event', self, line, index)
+        Alter.invoke_all('editor_key_presse_event', self, events, line, index)
         
         #do not avoid default key press event
-        super(Editor, self).keyPressEvent(event)
+        for evt in events:
+            super(Editor, self).keyPressEvent(evt)
     
-    def auto_close_event(self, event, line, index):
+    def auto_close_event(self, events, line, index):
+        event = events[0]
         auto_close_enabled = ModuleManager.core['settings'].Settings.value(
                 EditorHelper.SETTINGS_AUTO_CLOSE_BRACKETS,
                 'true'
             )
         brackets_quotes = EditorHelper.brakets_quotes_array()
         if auto_close_enabled == 'true' and event.text() in brackets_quotes:
-            self.insertAt(brackets_quotes[event.text()], line, index)
+            if self.hasSelectedText():
+                selected_text = self.selectedText()
+                text_size = len(selected_text)
+                replace_text = "{0}{1}{2}".format(
+                    event.text(), selected_text, brackets_quotes[event.text()])
+                self.replaceSelectedText(replace_text)
+                #remove orignal event from events list, we do not want to add
+                #the default key pressed.
+                events.pop(0)
+            else:
+                self.insertAt(brackets_quotes[event.text()], line, index)
         if event.key() == Qt.Key_Backspace:
             at_right = ''
             if len(self.text(line)) > index:
