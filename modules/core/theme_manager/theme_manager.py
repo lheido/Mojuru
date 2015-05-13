@@ -65,20 +65,32 @@ class ThemeManager:
         theme = ModuleTheme(theme_name)
         for elt, value in theme.editor_theme.items():
             color = QColor(value) if value[0] == '#' else None
-            if elt == 'MarginsBackground':
+            if elt == 'MarginsBackground' and color:
                 editor.setMarginsBackgroundColor(color)
-            elif elt == 'MarginsForeground':
+            elif elt == 'MarginsForeground' and color:
                 editor.setMarginsForegroundColor(color)
-            elif elt == 'FoldMargin':
+            elif elt == 'FoldMargin' and color:
                 editor.setFoldMarginColors(color, color)
-            elif elt == 'CaretLineBackground':
+            elif elt == 'CaretLineBackground' and color:
                 editor.setCaretLineBackgroundColor(color)
-            elif elt == 'CaretForeground':
+            elif elt == 'CaretForeground' and color:
                 editor.setCaretForegroundColor(color)
-            elif elt == 'Paper':
+            elif elt == 'Paper' and color:
                 lexer.setPaper(color) if lexer else editor.setPaper(color)
+            elif elt == 'MatchedBraceBackgroundColor' and color:
+                editor.setMatchedBraceBackgroundColor(color)
+            elif elt == 'MatchedBraceForegroundColor' and color:
+                editor.setMatchedBraceForegroundColor(color)
+            elif elt == 'UnmatchedBraceBackgroundColor' and color:
+                editor.setUnmatchedBraceBackgroundColor(color)
+            elif elt == 'UnmatchedBraceForegroundColor' and color:
+                editor.setUnmatchedBraceForegroundColor(color)
+            elif elt == 'SelectionBackgroundColor' and color:
+                editor.setSelectionBackgroundColor(color)
+            elif elt == 'SelectionForegroundColor' and color:
+                editor.setSelectionForegroundColor(color)
             if lexer:
-                if elt == 'DefaultPaper':
+                if elt == 'DefaultPaper' and color:
                     lexer.setDefaultPaper(color)
                 elif 'KeywordsEnsemble' in elt:
                     if editor.lang in elt:
@@ -88,9 +100,9 @@ class ThemeManager:
                                 return lexer.keys_ens[ens]
                             return keywords
                         setattr(lexer, 'keywords', wrapper())
-                elif hasattr(lexer, elt):
+                elif hasattr(lexer, elt) and color:
                     lexer.setColor(color, getattr(lexer, elt))
-            if not lexer and elt == 'Default':
+            if not lexer and elt == 'Default' and color:
                 editor.setColor(color)
     
     @classmethod
