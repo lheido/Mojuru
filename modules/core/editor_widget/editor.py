@@ -122,17 +122,26 @@ class Editor(QsciScintilla):
             )
         brackets_quotes = EditorHelper.brakets_quotes_array()
         if auto_close_enabled == 'true' and event.text() in brackets_quotes:
+            #if ControlModifier is pressed add ';' after closed parens/etc...
+            modifier = ';' if event.modifiers() == Qt.ControlModifier else ''
             if self.hasSelectedText():
                 selected_text = self.selectedText()
                 text_size = len(selected_text)
-                replace_text = "{0}{1}{2}".format(
-                    event.text(), selected_text, brackets_quotes[event.text()])
+                replace_text = "{0}{1}{2}{3}".format(
+                    event.text(), 
+                    selected_text, 
+                    brackets_quotes[event.text()],
+                    modifier
+                )
                 self.replaceSelectedText(replace_text)
                 #remove orignal event from events list, we do not want to add
                 #the default key pressed.
                 events.pop(0)
             else:
-                self.insertAt(brackets_quotes[event.text()], line, index)
+                insert_text = "{0}{1}".format(
+                    brackets_quotes[event.text()], modifier)
+                self.insertAt(insert_text, line, index)
+            
         if event.key() == Qt.Key_Backspace:
             at_right = ''
             if len(self.text(line)) > index:
