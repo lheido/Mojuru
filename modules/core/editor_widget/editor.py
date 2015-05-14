@@ -98,6 +98,14 @@ class Editor(QsciScintilla):
         #zoom to default font size
         self.zoomTo(0)
     
+    def unindent_current_line(self, parent, action):
+        line, index = self.getCursorPosition()
+        self.unindent(line)
+    
+    def indent_current_line(self, parent, action):
+        line, index = self.getCursorPosition()
+        self.indent(line)
+    
     def on_cursor_changed(self, line, index):
         #parent.status_bar.showMessage(
         #    self.tr("Line {line}, column {index}".format(line, index)))

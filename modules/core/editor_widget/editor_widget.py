@@ -76,6 +76,16 @@ class EditorWidget(QWidget):
             'ctrl+0',
             self.editor.zoom_reset
         )
+        self.add_action(
+            self.tr('Indent current line'), 
+            'ctrl+i',
+            self.editor.indent_current_line
+        )
+        self.add_action(
+            self.tr('Unindent current line'),
+            'ctrl+shift+i',
+            self.editor.unindent_current_line
+        )
         self.add_separator()
         self.add_action(
             self.tr('Auto close brackets and quotes'),
