@@ -118,7 +118,6 @@ class Editor(QsciScintilla):
         #invoke other modules
         Alter.invoke_all('editor_key_presse_event', self, events, line, index)
         
-        #do not avoid default key press event
         for evt in events:
             super(Editor, self).keyPressEvent(evt)
     
