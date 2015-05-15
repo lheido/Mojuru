@@ -130,7 +130,7 @@ class Editor(QsciScintilla):
         brackets_quotes = EditorHelper.brakets_quotes_array()
         if auto_close_enabled == 'true' and event.text() in brackets_quotes:
             #if ControlModifier is pressed add ';' after closed parens/etc...
-            modifier = ';' if event.modifiers() == Qt.ControlModifier else ''
+            modifier = ';' if event.modifiers() == Qt.AltModifier else ''
             if self.hasSelectedText():
                 selected_text = self.selectedText()
                 text_size = len(selected_text)
