@@ -150,12 +150,12 @@ class Editor(QsciScintilla):
                 self.insertAt(insert_text, line, index)
             
         if event.key() == Qt.Key_Backspace:
-            at_right = ''
+            at_right, at_left = '', ''
             if len(self.text(line)) > index:
                 at_right = self.text(line)[index]
-            at_left = self.text(line)[index-1]
+            if index > 0:
+                at_left = self.text(line)[index-1]
             if at_left in brackets_quotes:
                 if brackets_quotes[at_left] == at_right:
                     self.setSelection(line, index, line, index+1)
                     self.replaceSelectedText('')
-    
