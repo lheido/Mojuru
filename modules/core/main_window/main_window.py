@@ -6,6 +6,7 @@ import collections
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QPoint
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QAction
@@ -29,6 +30,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle('Mojuru')
+        app_icon = QIcon('images/mojuru_logo.png')
+        self.setWindowIcon(app_icon)
         
         reload_modules_action = QAction('Reload MainWindow', self)
         reload_modules_action.setShortcut('ctrl+shift+alt+r')
