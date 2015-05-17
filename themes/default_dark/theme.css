@@ -140,7 +140,7 @@ QTabWidget::tab QsciScintilla {
     background-color: #232323;
 }
 
-QTabWidget::tab QWidget {
+QTabWidget::tab > QWidget {
     background-color: #232323;
 }
 
