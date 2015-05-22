@@ -97,6 +97,16 @@ class EditorWidget(QWidget):
                 'true'
             )
         )
+        self.add_action(
+            self.tr('Use tabs to indent/unindent'),
+            'ctrl+shift+alt+&',
+            EditorHelper.use_tabs_to_indent,
+            checkable=True,
+            checked=ModuleManager.core['settings'].Settings.value(
+                EditorHelper.SETTINGS_USE_TABS_TO_INDENT,
+                'true'
+            )
+        )
         
         self.setFocusPolicy(Qt.NoFocus)
         self.setFocusProxy(self.editor)

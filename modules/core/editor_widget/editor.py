@@ -9,6 +9,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QMenu
 from PyQt5.Qsci import QsciScintilla
+from PyQt5.Qsci import QsciLexer
 
 from alter import Alter
 from alter import ModuleManager
@@ -50,12 +51,17 @@ class Editor(QsciScintilla):
         font.setPointSize(12)
         self.setFont(font)
         lexer_class = EditorHelper.language_lexer(self.file_info)
+        if lexer_class:
+            base_lexer = lexer_class()
+            self.lang_lexer = type(self.lang, (lexer_class,), {
+                'keys_ens': [base_lexer.keywords(i) for i in range(10)],
+                'keywords': lambda self, ens: self.keys_ens[ens]
+            })()
+        #self.lang_lexer = lexer_class() if lexer_class else None
+        #ModuleManager.core['theme_manager'].ThemeManager.set_editor_theme(
+        #    self, self.lang_lexer)
         
-        self.lang_lexer = lexer_class() if lexer_class else None
-        ModuleManager.core['theme_manager'].ThemeManager.set_editor_theme(
-            self, self.lang_lexer)
-        
-        if self.lang_lexer:
+        if hasattr(self, 'lang_lexer'):
             self.lang_lexer.setFont(font)
             self.setLexer(self.lang_lexer)
         

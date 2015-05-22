@@ -128,7 +128,8 @@ class EditorHelper:
         )
     }
     
-    SETTINGS_AUTO_CLOSE_BRACKETS = 'editor_helper_auto_close_brackets'
+    SETTINGS_AUTO_CLOSE_BRACKETS = 'editor/editor_helper_auto_close_brackets'
+    SETTINGS_USE_TABS_TO_INDENT = 'editor/editor_helper_use_tabs_to_indent'
     
     @classmethod
     def lang_from_file_info(cls, file_info):
@@ -166,3 +167,11 @@ class EditorHelper:
             "{": "}",
             "[": "]"
         }
+    
+    @classmethod
+    def use_tabs_to_indent(cls, editor_widget, action):
+        ModuleManager.core['settings'].Settings.set_value(
+            cls.SETTINGS_USE_TABS_TO_INDENT,
+            action.isChecked()
+        )
+        editor_widget.editor.setIndentationsUseTabs(action.isChecked())
