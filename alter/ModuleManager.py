@@ -40,9 +40,7 @@ class ModuleManager:
             sys.path.append(path)
         
         modules_list = [cls.load_info(module) for module in os.listdir(path)]
-        
-        modules_list = sorted(modules_list, 
-                              key=lambda moduleInfo: moduleInfo.weight)
+        modules_list = cls.dependency_sort(modules_list)
         
         for moduleInfo in modules_list:
             # alteration registrations
@@ -67,6 +65,22 @@ class ModuleManager:
     @classmethod
     def _set_attr_name(cls, module_name):
         setattr(cls, module_name, cls.modules[module_name])
+    
+    @classmethod
+    def dependency_sort(cls, modules):
+        i, new_list, copy = 0, [], [module for module in modules]
+        while copy != []:
+            find = len(copy[i].dependencies)
+            for name in copy[i].dependencies:
+                for loaded in new_list:
+                    if name == loaded.module_name:
+                        find -= 1
+            if find == 0:
+                new_list.append(copy.pop(i))
+                i = 0
+            else:
+                i += 1
+        return new_list
 
 
 class ModuleInfo:

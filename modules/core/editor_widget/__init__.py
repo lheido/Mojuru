@@ -8,6 +8,11 @@ Editor widget based on QSciScintilla widget
 
 name = "Editor Widget"
 
+dependencies = [
+    'settings',
+    'tab_widget'
+]
+
 alterations = [
     'editor_widget_init',
     'editor_init',

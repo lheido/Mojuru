@@ -8,6 +8,10 @@ Mojuru Main Window core module.
 
 name = "Main Window"
 
+dependencies = [
+    'settings'
+]
+
 alterations = [
     'main_window_add_vertical_widget',
     'main_window_add_horizontal_widget',

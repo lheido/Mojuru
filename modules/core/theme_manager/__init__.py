@@ -8,6 +8,12 @@ Theme manager core module.
 
 name = "Theme Manager"
 
+dependencies = [
+    'settings',
+    'main_window',
+    'editor_widget'
+]
+
 alterations = [
     'theme_add_theme'
 ]
