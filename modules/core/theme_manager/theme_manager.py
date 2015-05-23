@@ -142,7 +142,10 @@ class ThemeManager:
             if lexer:
                 to_lexer = theme['settings']['lexer']
                 if editor.lang in theme:
-                    to_lexer.update(theme[editor.lang])
+                    lang = editor.lang
+                    if hasattr(theme[editor.lang], 'identical'):
+                        lang = getattr(theme[editor.lang], 'identical')
+                    to_lexer.update(theme[lang])
                 cls.set_colors(to_lexer, lexer, cls.lexer_callback)
                 editor.setLexer(lexer)
             #set up default editor theme
