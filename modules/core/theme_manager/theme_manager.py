@@ -134,7 +134,7 @@ class ThemeManager:
         Get active theme and set up editor and lexer theme.
         """
         theme_name = ModuleManager.core['settings'].Settings.value(
-            'editor/active_syntax_theme', 'mojuru.dark')
+            'editor/active_syntax_theme', 'ashes.dark')
         theme = cls.get_resource_json('editor_widget',
             'base16-builder/output/mojuru/base16-{0}.json'.format(theme_name))
         if theme:
@@ -143,8 +143,8 @@ class ThemeManager:
                 to_lexer = theme['settings']['lexer']
                 if editor.lang in theme:
                     lang = editor.lang
-                    if hasattr(theme[editor.lang], 'identical'):
-                        lang = getattr(theme[editor.lang], 'identical')
+                    if 'identical' in theme[editor.lang]:
+                        lang = theme[editor.lang]['identical']
                     to_lexer.update(theme[lang])
                 cls.set_colors(to_lexer, lexer, cls.lexer_callback)
                 editor.setLexer(lexer)
@@ -187,7 +187,10 @@ class ThemeManager:
         elif color and (method == 'Paper' or method == 'DefaultPaper'):
             getattr(obj, 'set'+method)(color)
         else:
-            obj.setColor(color, getattr(obj, method))
+            try:
+                obj.setColor(color, getattr(obj, method))
+            except:
+                print('Warning: {0} has no attribute {1}.'.format(obj, method))
     
     @classmethod
     def save_active_theme(cls, theme):
