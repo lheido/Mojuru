@@ -40,91 +40,158 @@ class EditorHelper:
     language_helper = {
         "Python": (
             QsciLexerPython,
-            ["py"]
+            ["py"],
+            {
+                'comment_line': '#'
+            }
         ), 
         "CPP": (
             QsciLexerCPP, 
-            ["c","cpp","h"]
+            ["c","cpp","h"],
+            {
+                'comment_line': '//'
+            }
         ),
         "HTML": (
             QsciLexerHTML, 
-            ["html","php", "module", "inc"]
+            ["html","php", "module", "inc"],
+            {
+                'comment_line': '<!-- %content% -->'
+            }
         ), 
         "CSS": (
             QsciLexerCSS,
-            ["css"]
+            ["css", "scss"],
+            {
+                'comment_line': '/* %content% */'
+            }
         ),
         "Ruby": (
             QsciLexerRuby,
-            ["rb"]
+            ["rb"],
+            {
+                'comment_line': '//'
+            }
+            
         ), 
         "SQL": (
             QsciLexerSQL, 
-            ["sql"]
+            ["sql"],
+            {
+                'comment_line': '--'
+            }
         ),
         "Perl": (
             QsciLexerPerl,
-            ["pl","pm","perl","agi","pod"]
+            ["pl","pm","perl","agi","pod"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "JavaScript": (
             QsciLexerJavaScript,
-            ["js", "json"]
+            ["js", "json"],
+            {
+                'comment_line': '//'
+            }
         ),
         "Lua": (
             QsciLexerLua,
-            ["lua"]
+            ["lua"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "Bash": (
             QsciLexerBash,
-            ["sh","zsh","tcsh","ksh","ash","configure"]
+            ["sh","zsh","tcsh","ksh","ash","configure"],
+            {
+                'comment_line': '#'
+            }
         ), 
         "D": (
             QsciLexerD,
-            ["d","di"]
+            ["d","di"],
+            {
+                'comment_line': '//'
+            }
         ),
         "Java": (
             QsciLexerJava,
-            ["java","jsp"]
+            ["java","jsp"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "Makefile": (
             QsciLexerMakefile,
-            ["makefile","MakeFile","Makefile","mk","mak","GNUmakefile"]
+            ["makefile","MakeFile","Makefile","mk","mak","GNUmakefile"],
+            {
+                'comment_line': '#'
+            }
         ),
         "TCL": (
             QsciLexerTCL,
-            ["tcl","tk","wish"]
+            ["tcl","tk","wish"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "VHDL": (
             QsciLexerVHDL,
-            ["vhd","vhdl"]
+            ["vhd","vhdl"],
+            {
+                'comment_line': '//'
+            }
         ),
         "Verilog": (
             QsciLexerVerilog,
-            ["v"]
+            ["v"],
+            {
+                'comment_line': '//'
+            }
         ),
         "XML": (
             QsciLexerXML,
-            ["xml","sgml","xsl","xslt","xsd","xhtml"]
+            ["xml","sgml","xsl","xslt","xsd","xhtml"],
+            {
+                'comment_line': '<!-- %content% -->'
+            }
         ), 
         "YAML": (
             QsciLexerYAML,
-            ["yaml","yml"]
+            ["yaml","yml"],
+            {
+                'comment_line': '#'
+            }
         ),
         "Diff": (
             QsciLexerDiff,
-            ["diff","patch","rej"]
+            ["diff","patch","rej"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "TeX": (
             QsciLexerTeX,
-            ["tex","sty","idx","ltx","latex"]
+            ["tex","sty","idx","ltx","latex"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "CMake": (
             QsciLexerCMake,
-            ["cmake","ctest"]
+            ["cmake","ctest"],
+            {
+                'comment_line': '//'
+            }
         ), 
         "Matlab": (
             QsciLexerMatlab,
-            ["m"]
+            ["m"],
+            {
+                'comment_line': '//'
+            }
         )
     }
     

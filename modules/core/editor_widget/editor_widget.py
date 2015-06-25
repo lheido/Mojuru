@@ -107,6 +107,11 @@ class EditorWidget(QWidget):
                 'true'
             )
         )
+        self.add_action(
+            self.tr('Comment/Uncomment line(s)'),
+            'ctrl+e',
+            self.editor.comment_lines
+        )
         
         self.setFocusPolicy(Qt.NoFocus)
         self.setFocusProxy(self.editor)

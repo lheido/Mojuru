@@ -165,3 +165,46 @@ class Editor(QsciScintilla):
                 if brackets_quotes[at_left] == at_right:
                     self.setSelection(line, index, line, index+1)
                     self.replaceSelectedText('')
+    
+    def comment_lines(self, parent, action):
+        line, index = self.getCursorPosition()
+        line_from, index_from, line_to, index_to = self.getSelection()
+        comments = EditorHelper.language_helper[self.lang][2]
+        if 'comment_line' in comments.keys():
+            comment_chars = comments['comment_line'].split('%content%')
+            if line_from != -1: # equivalent to self.hasSelectedText() == True
+                for line in range(line_from, line_to + 1):
+                    text = self.text(line)
+                    if text.startswith(comment_chars[0]):
+                        self.setSelection(line, 0, line, len(comment_chars[0]))
+                        self.removeSelectedText()
+                        #TODO fix bug when comment_chars > 2
+                        if len(comment_chars) == 2 and \
+                                text.endwith(comment_chars[1]+'\n'):
+                            min_index = len(text) - len(comment_chars[1])
+                            self.setSelection(line, min_index, line, len(text))
+                            self.removeSelectedText()
+                    else:
+                        self.insertAt(comment_chars[0], line, 0)
+                        if len(comment_chars) == 2:
+                            self.insertAt(comment_chars[1], line, 
+                                          len(self.text(line))-1)
+            else:
+                text = self.text(line)
+                if text.startswith(comment_chars[0]):
+                    self.setSelection(line, 0, line, len(comment_chars[0]))
+                    self.removeSelectedText()
+                    #TODO fix bug when comment_chars > 2
+                    if len(comment_chars) == 2 and \
+                            text.endwith(comment_chars[1]+'\n'):
+                        min_index = len(text) - len(comment_chars[1])
+                        self.setSelection(line, min_index, line, len(text))
+                        self.removeSelectedText()
+                else:
+                    self.insertAt(comment_chars[0], line, 0)
+                    if len(comment_chars) == 2:
+                        self.insertAt(comment_chars[1], line, 
+                                      len(self.text(line))-1)
+            
+        
+
