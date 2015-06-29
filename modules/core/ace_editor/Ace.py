@@ -80,7 +80,7 @@ class Ace(QWebView):
         if self.language != None:
             mode = 'editor.getSession().setMode("ace/mode/{0}");'
             self.send_js(mode.format(self.language.lower()))
-        self.get_value()
+        self.send_js('editor.focus()')
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)

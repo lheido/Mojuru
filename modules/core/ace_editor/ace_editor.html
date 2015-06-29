@@ -29,6 +29,7 @@
 <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
+    editor.original_doc = editor.getValue();
     editor.setOptions({
         enableEmmet: true,
         enableBasicAutocompletion: true,
@@ -59,8 +60,10 @@
     // });
     editor.on("input", function() {
         // input is async event, which fires after any change events
-        var isClean = editor.session.getUndoManager().isClean();
-        AceEditor.modificationChanged(!isClean);
+        // document is modified only when current_doc != original_doc
+        var current_doc = editor.getValue();
+        var modified = editor.original_doc.localeCompare(current_doc) != 0;
+        AceEditor.modificationChanged(modified);
     })
     AceEditor.isReady()
 </script>
