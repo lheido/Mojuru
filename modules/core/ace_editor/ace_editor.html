@@ -53,9 +53,15 @@
         var pos = editor.getCursorPosition();
         AceEditor.cursorPositionChanged(pos.row, pos.column);
     });
-    editor.getSession().on('change', function(e) {
-        AceEditor.modificationChanged(true);
-    });
+    // editor.getSession().on('change', function(e) {
+    //     modified = !editor.getSession().getUndoManager().hasUndo();
+    //     AceEditor.modificationChanged(true);
+    // });
+    editor.on("input", function() {
+        // input is async event, which fires after any change events
+        var isClean = editor.session.getUndoManager().isClean();
+        AceEditor.modificationChanged(!isClean);
+    })
     AceEditor.isReady()
 </script>
 </body>
