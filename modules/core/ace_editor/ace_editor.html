@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title></title>
+<style type="text/css" media="screen">
+    body {
+        background-color: #424242;
+    }
+    #editor {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<div id="editor">{{ content }}</div>
+    
+<script src="ace_editor/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.setOption("scrollPastEnd", true);
+    AceEditor.is_ready()
+</script>
+</body>
+</html>

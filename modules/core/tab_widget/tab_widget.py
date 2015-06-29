@@ -74,10 +74,10 @@ class TabWidget(QTabWidget):
     def onFileItemActivated(self, file_info):
         Alter.invoke_all('tab_widget_add_tab', self, file_info)
     
-    def add_tab(self, cls, file_info):
+    def add_tab(self, cls, file_info, force_open=False):
         #if file is already open
         index, i = -1, 0
-        while i < self.count() and index == -1:
+        while not force_open and i < self.count() and index == -1:
             if self.widget(i).file_info == file_info:
                 index = i
             i += 1

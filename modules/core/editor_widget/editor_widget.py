@@ -26,7 +26,7 @@ Editor = editor.Editor
 
 @Alter.alter('tab_widget_add_tab')
 def open_file(tab_widget, file_info):
-    tab_widget.add_tab(EditorWidget, file_info)
+    tab_widget.add_tab(EditorWidget, file_info, True)
 
 
 class EditorWidget(QWidget):
