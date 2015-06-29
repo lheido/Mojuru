@@ -132,7 +132,6 @@ class EditorHelper:
         'XML':         ["^xml$|^rdf$|^rss$|^wsdl$|^xslt$|^atom$|^mathml$|^mml$|^xul$|^xbl$|^xaml$"],
         'XQuery':      ["^xq$"],
         'YAML':        ["^yaml$|^yml$"],
-        'Django':      ["^html$"]
     }
     
     SETTINGS_AUTO_CLOSE_BRACKETS = 'editor/editor_helper_auto_close_brackets'
