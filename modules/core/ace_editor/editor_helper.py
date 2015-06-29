@@ -1,198 +1,138 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import re
+
 from PyQt5.QtCore import Qt
-from PyQt5.Qsci import QsciLexerPython
-from PyQt5.Qsci import QsciLexerBash
-from PyQt5.Qsci import QsciLexerCMake
-from PyQt5.Qsci import QsciLexerCPP
-from PyQt5.Qsci import QsciLexerCSharp
-from PyQt5.Qsci import QsciLexerIDL
-from PyQt5.Qsci import QsciLexerJava
-from PyQt5.Qsci import QsciLexerJavaScript
-from PyQt5.Qsci import QsciLexerCSS
-from PyQt5.Qsci import QsciLexerD
-from PyQt5.Qsci import QsciLexerDiff
-from PyQt5.Qsci import QsciLexerFortran
-from PyQt5.Qsci import QsciLexerHTML
-from PyQt5.Qsci import QsciLexerXML
-from PyQt5.Qsci import QsciLexerLua
-from PyQt5.Qsci import QsciLexerMakefile
-from PyQt5.Qsci import QsciLexerMatlab
-from PyQt5.Qsci import QsciLexerPascal
-from PyQt5.Qsci import QsciLexerPerl
-from PyQt5.Qsci import QsciLexerPostScript
-from PyQt5.Qsci import QsciLexerPOV
-from PyQt5.Qsci import QsciLexerRuby
-from PyQt5.Qsci import QsciLexerSpice
-from PyQt5.Qsci import QsciLexerSQL
-from PyQt5.Qsci import QsciLexerTCL
-from PyQt5.Qsci import QsciLexerTeX
-from PyQt5.Qsci import QsciLexerVerilog
-from PyQt5.Qsci import QsciLexerVHDL
-from PyQt5.Qsci import QsciLexerYAML
 
 from alter import ModuleManager
 
 
 class EditorHelper:
 
-    language_helper = {
-        "Python": (
-            QsciLexerPython,
-            ["py"],
-            {
-                'comment_line': '#'
-            }
-        ), 
-        "CPP": (
-            QsciLexerCPP, 
-            ["c","cpp","h"],
-            {
-                'comment_line': '//'
-            }
-        ),
-        "HTML": (
-            QsciLexerHTML, 
-            ["html","php", "module", "inc"],
-            {
-                'comment_line': '<!-- %content% -->'
-            }
-        ), 
-        "CSS": (
-            QsciLexerCSS,
-            ["css", "scss"],
-            {
-                'comment_line': '/* %content% */'
-            }
-        ),
-        "Ruby": (
-            QsciLexerRuby,
-            ["rb"],
-            {
-                'comment_line': '//'
-            }
-            
-        ), 
-        "SQL": (
-            QsciLexerSQL, 
-            ["sql"],
-            {
-                'comment_line': '--'
-            }
-        ),
-        "Perl": (
-            QsciLexerPerl,
-            ["pl","pm","perl","agi","pod"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "JavaScript": (
-            QsciLexerJavaScript,
-            ["js", "json"],
-            {
-                'comment_line': '//'
-            }
-        ),
-        "Lua": (
-            QsciLexerLua,
-            ["lua"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "Bash": (
-            QsciLexerBash,
-            ["sh","zsh","tcsh","ksh","ash","configure"],
-            {
-                'comment_line': '#'
-            }
-        ), 
-        "D": (
-            QsciLexerD,
-            ["d","di"],
-            {
-                'comment_line': '//'
-            }
-        ),
-        "Java": (
-            QsciLexerJava,
-            ["java","jsp"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "Makefile": (
-            QsciLexerMakefile,
-            ["makefile","MakeFile","Makefile","mk","mak","GNUmakefile"],
-            {
-                'comment_line': '#'
-            }
-        ),
-        "TCL": (
-            QsciLexerTCL,
-            ["tcl","tk","wish"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "VHDL": (
-            QsciLexerVHDL,
-            ["vhd","vhdl"],
-            {
-                'comment_line': '//'
-            }
-        ),
-        "Verilog": (
-            QsciLexerVerilog,
-            ["v"],
-            {
-                'comment_line': '//'
-            }
-        ),
-        "XML": (
-            QsciLexerXML,
-            ["xml","sgml","xsl","xslt","xsd","xhtml"],
-            {
-                'comment_line': '<!-- %content% -->'
-            }
-        ), 
-        "YAML": (
-            QsciLexerYAML,
-            ["yaml","yml"],
-            {
-                'comment_line': '#'
-            }
-        ),
-        "Diff": (
-            QsciLexerDiff,
-            ["diff","patch","rej"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "TeX": (
-            QsciLexerTeX,
-            ["tex","sty","idx","ltx","latex"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "CMake": (
-            QsciLexerCMake,
-            ["cmake","ctest"],
-            {
-                'comment_line': '//'
-            }
-        ), 
-        "Matlab": (
-            QsciLexerMatlab,
-            ["m"],
-            {
-                'comment_line': '//'
-            }
-        )
+    supportedModes = {
+        'ABAP':        ["^abap$"],
+        'ABC':         ["^abc$"],
+        'ActionScript':["^as$"],
+        'ADA':         ["^ada$|^adb$"],
+        'Apache_Conf': ["^htaccess$|^htgroups$|^htpasswd$|^conf$|^htaccess$|^htgroups$|^htpasswd$"],
+        'AsciiDoc':    ["^asciidoc$|^adoc$"],
+        'Assembly_x86':["^asm$"],
+        'AutoHotKey':  ["^ahk$"],
+        'BatchFile':   ["^bat$|^cmd$"],
+        'C9Search':    ["^c9search_results$"],
+        'C_Cpp':       ["^cpp$|^c$|^cc$|^cxx$|^h$|^hh$|^hpp$"],
+        'Cirru':       ["^cirru$|^cr$"],
+        'Clojure':     ["^clj$|^cljs$"],
+        'Cobol':       ["^CBL$|^COB$"],
+        'coffee':      ["^coffee$|^cf$|^cson$|^Cakefile$"],
+        'ColdFusion':  ["^cfm$"],
+        'CSharp':      ["^cs$"],
+        'CSS':         ["^css$"],
+        'Curly':       ["^curly$"],
+        'D':           ["^d|di$"],
+        'Dart':        ["^dart$"],
+        'Diff':        ["^diff$|^patch$"],
+        'Dockerfile':  ["^Dockerfile$"],
+        'Dot':         ["^dot$"],
+        'Dummy':       ["^dummy$"],
+        'DummySyntax': ["^dummy$"],
+        'Eiffel':      ["^e$"],
+        'EJS':         ["^ejs$"],
+        'Elixir':      ["^ex$|^exs$"],
+        'Elm':         ["^elm$"],
+        'Erlang':      ["^erl$|^hrl$"],
+        'Forth':       ["^frt$|^fs$|^ldr$"],
+        'FTL':         ["^ftl$"],
+        'Gcode':       ["^gcode$"],
+        'Gherkin':     ["^feature$"],
+        'Gitignore':   ["^.gitignore$"],
+        'Glsl':        ["^glsl$|^frag$|^vert$"],
+        'golang':      ["^go$"],
+        'Groovy':      ["^groovy$"],
+        'HAML':        ["^haml$"],
+        'Handlebars':  ["^hbs$|^handlebars$|^tpl$|^mustache$"],
+        'Haskell':     ["^hs$"],
+        'haXe':        ["^hx$"],
+        'HTML':        ["^html$|^htm$|^xhtml$"],
+        'HTML_Ruby':   ["^erb$|^rhtml$|^html.erb$"],
+        'INI':         ["^ini$|^conf$|^cfg$|^prefs$"],
+        'Io':          ["^io$"],
+        'Jack':        ["^jack$"],
+        'Jade':        ["^jade$"],
+        'Java':        ["^java$"],
+        'JavaScript':  ["^js$|^jsm$"],
+        'JSON':        ["^json$"],
+        'JSONiq':      ["^jq$"],
+        'JSP':         ["^jsp$"],
+        'JSX':         ["^jsx$"],
+        'Julia':       ["^jl$"],
+        'LaTeX':       ["^tex$|^latex$|^ltx$|^bib$"],
+        'Lean':        ["^lean$|^hlean$"],
+        'LESS':        ["^less$"],
+        'Liquid':      ["^liquid$"],
+        'Lisp':        ["^lisp$"],
+        'LiveScript':  ["^ls$"],
+        'LogiQL':      ["^logic$|^lql$"],
+        'LSL':         ["^lsl$"],
+        'Lua':         ["^lua$"],
+        'LuaPage':     ["^lp$"],
+        'Lucene':      ["^lucene$"],
+        'Makefile':    ["^Makefile$|^GNUmakefile$|^makefile$|^OCamlMakefile$|^make$"],
+        'Markdown':    ["^md$|^markdown$"],
+        'Mask':        ["^mask$"],
+        'MATLAB':      ["^matlab$"],
+        'MEL':         ["^mel$"],
+        'MUSHCode':    ["^mc$|^mush$"],
+        'MySQL':       ["^mysql$"],
+        'Nix':         ["^nix$"],
+        'ObjectiveC':  ["^m$|^mm$"],
+        'OCaml':       ["^ml$|^mli$"],
+        'Pascal':      ["^pas$|^p$"],
+        'Perl':        ["^pl$|^pm$"],
+        'pgSQL':       ["^pgsql$"],
+        'PHP':         ["^php$|^phtml$"],
+        'Powershell':  ["^ps1$"],
+        'Praat':       ["^praat$|^praatscript$|^psc$|^proc$"],
+        'Prolog':      ["^plg$|^prolog$"],
+        'Properties':  ["^properties$"],
+        'Protobuf':    ["^proto$"],
+        'Python':      ["^py$"],
+        'R':           ["^r$"],
+        'RDoc':        ["^Rd$"],
+        'RHTML':       ["^Rhtml$"],
+        'Ruby':        ["^rb$|^ru$|^gemspec$|^rake$|^Guardfile$|^Rakefile$|^Gemfile$"],
+        'Rust':        ["^rs$"],
+        'SASS':        ["^sass$"],
+        'SCAD':        ["^scad$"],
+        'Scala':       ["^scala$"],
+        'Scheme':      ["^scm$|^rkt$"],
+        'SCSS':        ["^scss$"],
+        'SH':          ["^sh$|^bash$|^.bashrc$"],
+        'SJS':         ["^sjs$"],
+        'Smarty':      ["^smarty$|^tpl$"],
+        'snippets':    ["^snippets$"],
+        'Soy_Template':["^soy$"],
+        'Space':       ["^space$"],
+        'SQL':         ["^sql$"],
+        'Stylus':      ["^styl$|^stylus$"],
+        'SVG':         ["^svg$"],
+        'Tcl':         ["^tcl$"],
+        'Tex':         ["^tex$"],
+        'Text':        ["^txt$"],
+        'Textile':     ["^textile$"],
+        'Toml':        ["^toml$"],
+        'Twig':        ["^twig$"],
+        'Typescript':  ["^ts$|^typescript$|^str$"],
+        'Vala':        ["^vala$"],
+        'VBScript':    ["^vbs$|^vb$"],
+        'Velocity':    ["^vm$"],
+        'Verilog':     ["^v$|^vh$|^sv$|^svh$"],
+        'VHDL':        ["vhd$|vhdl$"],
+        'XML':         ["^xml$|^rdf$|^rss$|^wsdl$|^xslt$|^atom$|^mathml$|^mml$|^xul$|^xbl$|^xaml$"],
+        'XQuery':      ["^xq$"],
+        'YAML':        ["^yaml$|^yml$"],
+        'Django':      ["^html$"]
     }
     
     SETTINGS_AUTO_CLOSE_BRACKETS = 'editor/editor_helper_auto_close_brackets'
@@ -201,8 +141,9 @@ class EditorHelper:
     @classmethod
     def lang_from_file_info(cls, file_info):
         suffix = file_info.suffix()
-        for language, info in cls.language_helper.items():
-            if suffix in info[1]:
+        for language, info in cls.supportedModes.items():
+            regex = re.compile(info[0])
+            if regex.match(suffix):
                 return language
         return None
     

@@ -13,6 +13,7 @@
         bottom: 0;
         left: 0;
         font-size: 16px;
+        background-color: #424242;
     }
 </style>
 </head>
@@ -25,7 +26,14 @@
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.setOption("scrollPastEnd", true);
-    AceEditor.is_ready()
+    editor.getSession().selection.on('changeCursor', function(e) {
+        var pos = editor.getCursorPosition();
+        AceEditor.cursorPositionChanged(pos.row, pos.column);
+    });
+    editor.getSession().on('change', function(e) {
+        AceEditor.modificationChanged(true);
+    });
+    AceEditor.isReady()
 </script>
 </body>
 </html>

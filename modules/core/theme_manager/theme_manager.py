@@ -135,6 +135,7 @@ class ThemeManager:
         """
         theme_name = ModuleManager.core['settings'].Settings.value(
             'editor/active_syntax_theme', 'ashes.dark')
+        print(theme_name)
         theme = cls.get_resource_json('editor_widget',
             'base16-builder/output/mojuru/base16-{0}.json'.format(theme_name))
         if theme:
