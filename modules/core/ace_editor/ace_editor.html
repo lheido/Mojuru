@@ -13,7 +13,7 @@
         bottom: 0;
         left: 0;
         font-size: 16px;
-        background-color: #424242;
+        l0
     }
 </style>
 </head>
@@ -21,11 +21,40 @@
 
 <div id="editor">{{ content }}</div>
     
-<script src="ace_editor/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace_editor/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace_editor/src-noconflict/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace_editor/src-noconflict/ext-emmet.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace_editor/src-noconflict/ext-keybinding_menu.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
+    var emmet = ace.require("ace/ext/emmet");
     editor.setTheme("ace/theme/monokai");
-    editor.setOption("scrollPastEnd", true);
+    editor.setOptions({
+        enableEmmet: true,
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        scrollPastEnd: true
+    });
+    editor.commands.addCommand({
+        name: "togglecomment",
+        bindKey: {win: "Ctrl-e", mac: "Command-e"},
+        exec: function(editor) { editor.toggleCommentLines(); },
+        multiSelectAction: "forEachLine",
+        scrollIntoView: "selectionPart"
+    });
+    editor.commands.addCommand({
+        name: "toggleBlockComment",
+        bindKey: {win: "Ctrl-Shift-e", mac:"Command-Shift-e"},
+        exec: function(editor) { editor.toggleBlockComment(); },
+        multiSelectAction: "forEach",
+        scrollIntoView: "selectionPart"
+    });
+    editor.commands.addCommand({
+        name: "emmet:expand_abbreviation",
+        bindKey: {win:"Alt-e", mac: "Alt-e"},
+        exec: emmet.runEmmetCommand,
+        multiSelectAction: "forEach"
+    });
     editor.getSession().selection.on('changeCursor', function(e) {
         var pos = editor.getCursorPosition();
         AceEditor.cursorPositionChanged(pos.row, pos.column);

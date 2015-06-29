@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QStatusBar
 from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QSizePolicy
 
 from alter import Alter
 from alter import ModuleManager
@@ -50,8 +51,8 @@ class AceEditor(QWidget):
         self.v_box.setSpacing(0)
         self.v_box.setContentsMargins(0, 0, 0, 0)
         
-        self.v_box.addWidget(self.editor)
-        self.v_box.addWidget(self.status_bar)
+        self.v_box.addWidget(self.editor, 1)
+        self.v_box.addWidget(self.status_bar, 0)
         
         self.setLayout(self.v_box)
         
@@ -128,6 +129,7 @@ class AceEditor(QWidget):
             action = self.sender()
             callback(self, action)
         return __new_function
+    
 
 class StatusBar(QWidget):
     
@@ -142,6 +144,7 @@ class StatusBar(QWidget):
         self.h_box.addWidget(self.label)
         self.h_box.addWidget(self.menu_button, 1, Qt.AlignRight)
         self.setLayout(self.h_box)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
     
     def showMessage(self, message=''):
         self.label.setText(message)

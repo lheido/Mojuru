@@ -6,7 +6,7 @@ import pkg_resources
 import html
 
 from PyQt5.QtCore import Qt, QUrl, pyqtSignal
-from PyQt5.QtWidgets import QAction, QDialog, QVBoxLayout
+from PyQt5.QtWidgets import QAction, QDialog, QVBoxLayout, QSizePolicy
 from PyQt5.QtWebKitWidgets import QWebView, QWebInspector
 from PyQt5.QtWebKit import QWebSettings
 
@@ -23,6 +23,7 @@ class Ace(QWebView):
     
     def __init__(self, file_info, parent=None):
         super(Ace, self).__init__(parent)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.parent = parent
         self.file_info = file_info
         self.language = EditorHelper.lang_from_file_info(file_info)

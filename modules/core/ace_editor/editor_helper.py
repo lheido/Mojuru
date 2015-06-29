@@ -147,39 +147,3 @@ class EditorHelper:
                 return language
         return None
     
-    @classmethod
-    def language_lexer(cls, file_info):
-        suffix = file_info.suffix()
-        for language, info in cls.language_helper.items():
-            if suffix in info[1]:
-                return cls.language_helper[language][0]
-        return None
-    
-    @classmethod
-    def auto_close_brackets_quotes(cls, editor_widget, action):
-        ModuleManager.core['settings'].Settings.set_value(
-            cls.SETTINGS_AUTO_CLOSE_BRACKETS,
-            action.isChecked()
-        )
-    
-    @classmethod
-    def brakets_quotes_array(cls):
-        #return [
-        #    Qt.Key_QuoteDbl, Qt.Key_Apostrophe, Qt.Key_BraceLeft, 
-        #    Qt.Key_ParenLeft
-        #]
-        return {
-            "'": "'", 
-            '"': '"', 
-            "(": ")", 
-            "{": "}",
-            "[": "]"
-        }
-    
-    @classmethod
-    def use_tabs_to_indent(cls, editor_widget, action):
-        ModuleManager.core['settings'].Settings.set_value(
-            cls.SETTINGS_USE_TABS_TO_INDENT,
-            action.isChecked()
-        )
-        editor_widget.editor.setIndentationsUseTabs(action.isChecked())
