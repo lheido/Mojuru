@@ -67,10 +67,11 @@ class TabWidget(QTabWidget):
     
     def eventFilter(self, o, event):
         if o == self.tabBar() and event.type() == QEvent.MouseButtonPress:
-            index = self.tabBar().tabAt(event.pos())
-            if index != -1:
-                self.on_tab_closed(index)
-                return True
+            if event.button() == Qt.MidButton:
+                index = self.tabBar().tabAt(event.pos())
+                if index != -1:
+                    self.on_tab_closed(index)
+                    return True
         return super(TabWidget, self).eventFilter(o, event)
     
     def on_current_changed(self, index):
