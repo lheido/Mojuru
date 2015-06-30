@@ -78,9 +78,11 @@ class Ace(QWebView):
     
     def editor_ready(self):
         if self.language != None:
-            mode = 'editor.getSession().setMode("ace/mode/{0}");'
-            self.send_js(mode.format(self.language.lower()))
-        self.send_js('editor.focus()')
+            self.set_mode(self.language.lower())
+        self.set_focus()
+        if self.language == 'PHP':
+            self.set_tab_size(2)
+            self.set_use_soft_tabs(False)
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)
@@ -94,6 +96,9 @@ class Ace(QWebView):
     
     def set_value(self, content):
         self.send_js('editor.setValue("{0}")'.format(content))
+    
+    def set_focus(self):
+        self.send_js('editor.focus()')
     
     def insert(self, text):
         self.send_js('editor.insert("{0}")'.format(text))
@@ -124,6 +129,7 @@ class Ace(QWebView):
         self.send_js('editor.getSession().setTabSize({0})'.format(tab_size))
     
     def set_use_soft_tabs(self, b):
+        b = 'true' if b else 'false'
         self.send_js('editor.getSession().setUseSoftTabs({0})'.format(b))
     
     def set_font_size(self, font_size):
@@ -131,17 +137,21 @@ class Ace(QWebView):
         self.send_js(cmd.format(font_size))
     
     def set_use_wrap_mode(self, b):
+        b = 'true' if b else 'false'
         cmd = "editor.getSession().setUseWrapMode({0})"
         self.send_js(cmd.format(b))
     
     def set_highlight_active_line(self, b):
+        b = 'true' if b else 'false'
         cmd = "editor.setHighlightActiveLine({0})"
         self.send_js(cmd.format(b))
     
     def set_show_print_margin(self, b):
+        b = 'true' if b else 'false'
         cmd = "editor.setShowPrintMargin({0})"
         self.send_js(cmd.format(b))
     
     def set_read_only(self, b):
+        b = 'true' if b else 'false'
         self.send_js('editor.setReadOnly({0})'.format(b))
     
