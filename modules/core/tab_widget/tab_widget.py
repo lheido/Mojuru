@@ -4,6 +4,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QTabWidget
@@ -34,6 +35,7 @@ class TabWidget(QTabWidget):
     
     def __init__(self, parent=None):
         super(TabWidget, self).__init__(parent)
+        self.tabBar().installEventFilter(self)
         self.setTabsClosable(True)
         self.setMovable(True)
         self.setFocusPolicy(Qt.NoFocus)
@@ -62,6 +64,14 @@ class TabWidget(QTabWidget):
                         TabWidgetHelper.previous_tab)
         Alter.invoke_all('tab_widget_add_action', self)
         self.currentChanged[int].connect(self.on_current_changed)
+    
+    def eventFilter(self, o, event):
+        if o == self.tabBar() and event.type() == QEvent.MouseButtonPress:
+            index = self.tabBar().tabAt(event.pos())
+            if index != -1:
+                self.on_tab_closed(index)
+                return True
+        return super(TabWidget, self).eventFilter(o, event)
     
     def on_current_changed(self, index):
         if index != -1:
