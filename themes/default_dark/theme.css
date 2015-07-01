@@ -135,11 +135,6 @@ QTabBar::tab:first:!selected {
     border-right: 1px solid #848484;*/
 }
 
-QTabWidget::tab QsciScintilla {
-    border: none;
-    background-color: #232323;
-}
-
 QTabWidget::tab > QWidget {
     background-color: #232323;
 }
