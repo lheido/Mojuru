@@ -59,6 +59,7 @@ class Ace(QWebView):
         if self.modified:
             with open(self.file_info.absoluteFilePath(), 'w') as f:
                 f.write(self.get_value())
+            self.original_to_current_doc()
             self.modificationChanged.emit(False)
             parent.status_bar.showMessage(self.tr("Saved file."))
             Alter.invoke_all('editor_save', self)
@@ -90,6 +91,9 @@ class Ace(QWebView):
         self.dialogInspector.layout().addWidget(self.inspector)
         self.dialogInspector.setModal(False)
         self.dialogInspector.show()
+    
+    def original_to_current_doc(self):
+        self.send_js('editor.orignalToCurrentDoc()')
     
     def get_value(self):
         return self.send_js('editor.getValue()')
