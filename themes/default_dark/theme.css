@@ -166,7 +166,7 @@ QTabBar::close-button:hover {
 }
 
 #Navigation QPushButton {
-    padding: 8px;
+    padding: 11px;
 }
 
 #Navigation QPushButton::menu-indicator {
@@ -184,6 +184,21 @@ QTreeView {
     color: #CECECE;
 }
 
+QTreeView::item:hover,
+QTreeView::item:selected,
+QTreeView::branch:hover,
+QTreeView::branch:selected {
+    background-color: #232323;
+}
+
 QMainWindow {
     background-color: #424242;
+}
+
+QMenu::item {
+    background-color: #424242;
+}
+
+QMenu::item:selected {
+    background-color: #232323;
 }
