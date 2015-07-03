@@ -13,6 +13,7 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtCore import QDir
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QTreeView
@@ -84,7 +85,7 @@ class Navigation(QWidget):
         self.menu.addMenu(self.menu_directories)
         
         self.tree = QTreeView(self)
-        self.model = QFileSystemModel(self)
+        self.model = FileSystemModel(self)
         self.tree.setModel(self.model)
         self.tree.setColumnHidden(1, True)
         self.tree.setColumnHidden(2, True)
@@ -293,3 +294,23 @@ class Navigation(QWidget):
             self.SETTINGS_CURRENT_DIR,
             path
         )
+
+
+class FileSystemModel(QFileSystemModel):
+    """docstring for FileSystemModle"""
+    
+    def __init__(self, parent=None):
+        super(FileSystemModel, self).__init__(parent)
+    
+    def data(self, index, role):
+        if role == Qt.DecorationRole:
+            return None
+        if role == Qt.DisplayRole:
+            info = self.fileInfo(index)
+            if info.isDir():
+                return info.fileName()
+        if role == Qt.ForegroundRole:
+            info = self.fileInfo(index)
+            if info.isDir():
+                return QColor('#74A494')
+        return super(FileSystemModel, self).data(index, role)

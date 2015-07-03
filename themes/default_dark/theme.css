@@ -175,15 +175,15 @@ QTreeView {
     border: none;
     padding-top: 10px;
     border-top-right-radius: 5px;
-    background-color: #565656;
-    color: #CECECE;
+    background-color: #232323;
+    color: #F0F0F0;
 }
 
 QTreeView::item:hover,
 QTreeView::item:selected,
 QTreeView::branch:hover,
 QTreeView::branch:selected {
-    background-color: #232323;
+    background-color: #424242;
 }
 
 QMainWindow {
