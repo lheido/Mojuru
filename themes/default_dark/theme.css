@@ -176,7 +176,7 @@ QTreeView {
     padding-top: 10px;
     border-top-right-radius: 5px;
     background-color: #232323;
-    color: #F0F0F0;
+    color: #C4C4C4;
 }
 
 QTreeView::item:hover,
