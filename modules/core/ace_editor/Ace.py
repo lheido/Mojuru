@@ -66,6 +66,12 @@ class Ace(QWebView):
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
     
+    def toggle_hidden(self, parent, action=None):
+        self.set_show_invisibles(action.isChecked())
+    
+    def toggle_soft_tabs(self, parent, action=None):
+        self.set_use_soft_tabs(action.isChecked())
+    
     def main_frame(self):
         """ Convinient function to get main QWebFrame """
         return self.page().mainFrame()
@@ -81,9 +87,6 @@ class Ace(QWebView):
         if self.language != None:
             self.set_mode(self.language.lower())
         self.set_focus()
-        if self.language == 'PHP':
-            self.set_tab_size(2)
-            self.set_use_soft_tabs(False)
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)
@@ -158,4 +161,8 @@ class Ace(QWebView):
     def set_read_only(self, b):
         b = 'true' if b else 'false'
         self.send_js('editor.setReadOnly({0})'.format(b))
+    
+    def set_show_invisibles(self, b):
+        b = 'true' if b else 'false'
+        self.send_js('editor.setShowInvisibles({0})'.format(b))
     

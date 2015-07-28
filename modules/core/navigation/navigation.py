@@ -68,12 +68,6 @@ class Navigation(QWidget):
         self.menu_button = QPushButton('Select directory', self)
         self.menu_button.setFlat(True)
 #        self.menu_button.clicked.connect(self.on_menu_button_clicked)
-        self.menu_button.setStyleSheet(
-            """
-            QPushButton { text-align: center; }
-            QPushButton:focus { outline: none; border: 1px solid #424242; }
-            """    
-        )
         self.menu = QMenu(self)
         self.menu_button.setMenu(self.menu)
         self.menu_directories = QMenu(self)
@@ -134,6 +128,9 @@ class Navigation(QWidget):
             for action in self.menu_directories.actions():
                 if action.data() == current_dir:
                     action.trigger()
+        
+        self.menu_button.setFocusPolicy(Qt.NoFocus)
+        self.menu_button.setFocusProxy(self.tree)
     
     def on_menu_button_clicked(self):
         pos = self.mapToGlobal(self.menu_button.pos())

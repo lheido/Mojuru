@@ -38,11 +38,12 @@ class AceEditor(QWidget):
         super(AceEditor, self).__init__(parent)
         self.parent = parent
         self.file_info = file_info
+        self.editor_actions = {}
         self.language = EditorHelper.lang_from_file_info(file_info)
         
         self.status_bar = StatusBar(self)
         
-        self.editor = Ace(self.file_info)
+        self.editor = Ace(self.file_info, self)
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
         self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
@@ -60,9 +61,15 @@ class AceEditor(QWidget):
             self.on_menu_button_clicked)
         
         self.menu = QMenu(self)
-        self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
+        self.add_action('Save', 'ctrl+s', self.editor.save)
         self.add_separator()
-        
+        self.add_action(
+            'Show hidden', 'ctrl+i', self.editor.toggle_hidden,checkable=True
+        )
+        self.add_action(
+            'Use soft tabs', 'ctrl+shift+alt+s', self.editor.toggle_soft_tabs,
+            checkable=True
+        )
         self.setFocusPolicy(Qt.NoFocus)
         self.setFocusProxy(self.editor)
         
@@ -93,7 +100,7 @@ class AceEditor(QWidget):
         Créer une fonction à la volé pour fournir des arguments aux fonctions
         associé aux actions.
         """
-        action = QAction(name, self)
+        action = QAction(self.tr(name), self)
         if 'icon' in kwargs:
             action.setIcon(kwargs['icon'])
         if 'checkable' in kwargs and kwargs['checkable']:
@@ -114,6 +121,7 @@ class AceEditor(QWidget):
         
         self.addAction(action)
         self.menu.addAction(action)
+        self.editor_actions[name] = action
         
     def add_separator(self):
         """Simple abstraction of self.context_menu.addSeparator()"""
