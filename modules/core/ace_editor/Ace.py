@@ -18,6 +18,7 @@ class Ace(QWebView):
     """ Embbeded Ace javascript web editor """
     
     isReady = pyqtSignal()
+    editorReady = pyqtSignal()
     modificationChanged = pyqtSignal(bool)
     cursorPositionChanged = pyqtSignal(int, int)
     
@@ -87,6 +88,7 @@ class Ace(QWebView):
         if self.language != None:
             self.set_mode(self.language.lower())
         self.set_focus()
+        self.editorReady.emit()
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)
@@ -134,6 +136,9 @@ class Ace(QWebView):
     
     def set_tab_size(self, tab_size):
         self.send_js('editor.getSession().setTabSize({0})'.format(tab_size))
+    
+    def get_tab_size(self):
+        return self.send_js('editor.getSession().getTabSize()')
     
     def set_use_soft_tabs(self, b):
         b = 'true' if b else 'false'

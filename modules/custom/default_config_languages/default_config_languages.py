@@ -11,7 +11,7 @@ def default_config_languages_init(ace_editor):
     
     if language == 'PHP':
         ace_editor.set_tab_size(2)
-        ace_editor.editor_actions['Use soft tabs'].setChecked(False)
+        ace_editor.editor_actions['Use soft tabs'].setChecked(True)
         
     elif language == 'Python':
         ace_editor.editor_actions['Use soft tabs'].setChecked(True)

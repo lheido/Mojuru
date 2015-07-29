@@ -91,7 +91,7 @@ class EditorHelper:
         'Pascal':      ["^pas$|^p$"],
         'Perl':        ["^pl$|^pm$"],
         'pgSQL':       ["^pgsql$"],
-        'PHP':         ["^php$|^phtml$"],
+        'PHP':         ["^php$|^phtml$|^inc$"],
         'Powershell':  ["^ps1$"],
         'Praat':       ["^praat$|^praatscript$|^psc$|^proc$"],
         'Prolog':      ["^plg$|^prolog$"],
