@@ -209,3 +209,8 @@ QPushButton:pressed, QTabWidget::tab QPushButton:pressed {
 QPushButton::menu-indicator {
     subcontrol-position: right center;
 }
+
+QSpinBox {
+    border: none;
+    background-color: transparent;
+}

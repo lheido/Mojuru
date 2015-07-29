@@ -153,6 +153,7 @@ class StatusBar(QWidget):
         self.menu_button.setFlat(True)
         
         self.tab_size = QSpinBox(self)
+        self.tab_size.setPrefix(self.tr('Tab size : '))
         self.tab_size.setRange(0, 8)
         self.tab_size.setSingleStep(2)
         self.tab_size.setValue(4)
