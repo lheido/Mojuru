@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QStatusBar
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QSpinBox
 
 from alter import Alter
 from alter import ModuleManager
@@ -38,11 +39,13 @@ class AceEditor(QWidget):
         super(AceEditor, self).__init__(parent)
         self.parent = parent
         self.file_info = file_info
+        self.editor_actions = {}
         self.language = EditorHelper.lang_from_file_info(file_info)
+        
+        self.editor = Ace(self.file_info, self)
         
         self.status_bar = StatusBar(self)
         
-        self.editor = Ace(self.file_info)
         self.editor.modificationChanged[bool].connect(
             self.on_modification_changed)
         self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
@@ -60,9 +63,15 @@ class AceEditor(QWidget):
             self.on_menu_button_clicked)
         
         self.menu = QMenu(self)
-        self.add_action(self.tr('Save'), 'ctrl+s', self.editor.save)
+        self.add_action('Save', 'ctrl+s', self.editor.save)
         self.add_separator()
-        
+        self.add_action(
+            'Show hidden', 'ctrl+i', self.editor.toggle_hidden,checkable=True
+        )
+        self.add_action(
+            'Use soft tabs', 'ctrl+shift+alt+s', self.editor.toggle_soft_tabs,
+            checkable=True
+        )
         self.setFocusPolicy(Qt.NoFocus)
         self.setFocusProxy(self.editor)
         
@@ -93,7 +102,7 @@ class AceEditor(QWidget):
         Créer une fonction à la volé pour fournir des arguments aux fonctions
         associé aux actions.
         """
-        action = QAction(name, self)
+        action = QAction(self.tr(name), self)
         if 'icon' in kwargs:
             action.setIcon(kwargs['icon'])
         if 'checkable' in kwargs and kwargs['checkable']:
@@ -114,6 +123,7 @@ class AceEditor(QWidget):
         
         self.addAction(action)
         self.menu.addAction(action)
+        self.editor_actions[name] = action
         
     def add_separator(self):
         """Simple abstraction of self.context_menu.addSeparator()"""
@@ -135,16 +145,37 @@ class StatusBar(QWidget):
     
     def __init__(self, parent=None):
         super(StatusBar, self).__init__(parent)
+        self.parent = parent
         self.label = QLabel('', self)
+        
         self.menu_button = QPushButton('', self)
         self.menu_button.setIcon(QIcon('images/properties.png'))
         self.menu_button.setFlat(True)
+        
+        self.tab_size = QSpinBox(self)
+        self.tab_size.setPrefix(self.tr('Tab size : '))
+        self.tab_size.setRange(0, 8)
+        self.tab_size.setSingleStep(2)
+        self.tab_size.setValue(4)
+        self.tab_size.valueChanged.connect(self.set_tab_size)
+        self.parent.editor.isReady.connect(self.default_tab_size)
+        
         self.h_box = QHBoxLayout(self)
         self.h_box.setSpacing(0)
         self.h_box.addWidget(self.label)
+        self.h_box.addWidget(self.tab_size, 42, Qt.AlignRight)
         self.h_box.addWidget(self.menu_button, 1, Qt.AlignRight)
         self.setLayout(self.h_box)
+        
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
     
     def showMessage(self, message=''):
         self.label.setText(message)
+    
+    def set_tab_size(self, value):
+        self.parent.editor.set_tab_size(value)
+    
+    def default_tab_size(self):
+        size = self.parent.editor.get_tab_size()
+        if size is not None:
+            self.tab_size.setValue(int(size))

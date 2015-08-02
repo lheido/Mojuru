@@ -18,6 +18,7 @@ class Ace(QWebView):
     """ Embbeded Ace javascript web editor """
     
     isReady = pyqtSignal()
+    editorReady = pyqtSignal()
     modificationChanged = pyqtSignal(bool)
     cursorPositionChanged = pyqtSignal(int, int)
     
@@ -66,6 +67,12 @@ class Ace(QWebView):
         else :
             parent.status_bar.showMessage(self.tr("Nothing to save."))
     
+    def toggle_hidden(self, parent, action=None):
+        self.set_show_invisibles(action.isChecked())
+    
+    def toggle_soft_tabs(self, parent, action=None):
+        self.set_use_soft_tabs(action.isChecked())
+    
     def main_frame(self):
         """ Convinient function to get main QWebFrame """
         return self.page().mainFrame()
@@ -81,9 +88,7 @@ class Ace(QWebView):
         if self.language != None:
             self.set_mode(self.language.lower())
         self.set_focus()
-        if self.language == 'PHP':
-            self.set_tab_size(2)
-            self.set_use_soft_tabs(False)
+        self.editorReady.emit()
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)
@@ -132,6 +137,9 @@ class Ace(QWebView):
     def set_tab_size(self, tab_size):
         self.send_js('editor.getSession().setTabSize({0})'.format(tab_size))
     
+    def get_tab_size(self):
+        return self.send_js('editor.getSession().getTabSize()')
+    
     def set_use_soft_tabs(self, b):
         b = 'true' if b else 'false'
         self.send_js('editor.getSession().setUseSoftTabs({0})'.format(b))
@@ -158,4 +166,8 @@ class Ace(QWebView):
     def set_read_only(self, b):
         b = 'true' if b else 'false'
         self.send_js('editor.setReadOnly({0})'.format(b))
+    
+    def set_show_invisibles(self, b):
+        b = 'true' if b else 'false'
+        self.send_js('editor.setShowInvisibles({0})'.format(b))
     

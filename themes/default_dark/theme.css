@@ -4,13 +4,11 @@ QWidget {
 }
 
 QWidget:focus {
-    border: 1px solid #6dd7ae;
+    /*border: 1px solid #6dd7ae;*/
+    outline: none;
 }
 
-/*QPushButton {
-    padding: 10px;
-}
-
+/*
 QPushButton::menu-indicator {
     subcontrol-position: right center;
     subcontrol-origin: padding;
@@ -160,14 +158,6 @@ QTabBar::close-button:hover {
     image: url(images/close-hover.png);
 }
 
-#Navigation QPushButton {
-    padding: 11px;
-}
-
-#Navigation QPushButton::menu-indicator {
-    subcontrol-position: right middle;
-}
-
 /** QTreeView Style **/
 QTreeView {
     /*border-top: 1px solid #232323;
@@ -186,14 +176,41 @@ QTreeView::branch:selected {
     background-color: #424242;
 }
 
+QTreeView::item:selected {
+    color: white;
+}
+
 QMainWindow {
     background-color: #424242;
 }
 
-QMenu::item {
+QMenu, QTabWidget::tab QMenu {
     background-color: #424242;
 }
 
-QMenu::item:selected {
+QMenu::item, QTabWidget::tab QMenu::item {
+    background-color: transparent;
+}
+
+QMenu::item:selected, QTabWidget::tab QMenu::item:selected {
     background-color: #232323;
+}
+
+QPushButton, QTabWidget::tab QPushButton {
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+QPushButton:pressed, QTabWidget::tab QPushButton:pressed {
+    background-color: black;
+}
+
+QPushButton::menu-indicator {
+    subcontrol-position: right center;
+}
+
+QSpinBox {
+    border: none;
+    background-color: transparent;
 }
