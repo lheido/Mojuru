@@ -7,6 +7,7 @@ import html
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTextCodec
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget
@@ -46,8 +47,8 @@ class AceEditor(QWidget):
         
         self.status_bar = StatusBar(self)
         
-        self.editor.modificationChanged[bool].connect(
-            self.on_modification_changed)
+        self.editor.modificationChanged.connect(
+            self.modification_changed)
         self.editor.cursorPositionChanged.connect(self.on_cursor_changed)
         
         self.v_box = QVBoxLayout(self)
@@ -77,10 +78,12 @@ class AceEditor(QWidget):
         
         Alter.invoke_all('editor_widget_init', self)
     
-    def on_modification_changed(self, modified):
+    @pyqtSlot(bool, name='modificationChanged')
+    def modification_changed(self, b):
         if self.parent:
-            self.parent.on_current_modified(modified)
+            self.parent.on_current_modified(b)
     
+    @pyqtSlot(int, int, name='cursorPositionChanged')
     def on_cursor_changed(self, line, index):
         self.status_bar.showMessage(
             self.tr("Line {0}, column {1}".format(line + 1, index))
@@ -158,7 +161,6 @@ class StatusBar(QWidget):
         self.tab_size.setSingleStep(2)
         self.tab_size.setValue(4)
         self.tab_size.valueChanged.connect(self.set_tab_size)
-        self.parent.editor.isReady.connect(self.default_tab_size)
         
         self.h_box = QHBoxLayout(self)
         self.h_box.setSpacing(0)
@@ -173,6 +175,7 @@ class StatusBar(QWidget):
         self.label.setText(message)
     
     def set_tab_size(self, value):
+        self.tab_size.setValue(value)
         self.parent.editor.set_tab_size(value)
     
     def default_tab_size(self):

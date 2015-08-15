@@ -9,8 +9,8 @@ from alter import ModuleManager
 def default_config_languages_init(ace_editor):
     language = ace_editor.language
     
-    if language == 'PHP':
-        ace_editor.set_tab_size(2)
+    if language in ['PHP','HTML','CSS','SCSS','JavaScript','LESS','Twig']:
+        ace_editor.status_bar.set_tab_size(2)
         ace_editor.editor_actions['Use soft tabs'].setChecked(True)
         
     elif language == 'Python':

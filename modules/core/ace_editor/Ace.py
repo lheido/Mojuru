@@ -5,7 +5,7 @@ import os
 import pkg_resources
 import html
 
-from PyQt5.QtCore import Qt, QUrl, pyqtSignal
+from PyQt5.QtCore import Qt, QUrl, pyqtSignal, pyqtSlot, QEventLoop
 from PyQt5.QtWidgets import QAction, QDialog, QVBoxLayout, QSizePolicy
 from PyQt5.QtWebKitWidgets import QWebView, QWebInspector
 from PyQt5.QtWebKit import QWebSettings
@@ -17,10 +17,9 @@ from .editor_helper import EditorHelper
 class Ace(QWebView):
     """ Embbeded Ace javascript web editor """
     
-    isReady = pyqtSignal()
-    editorReady = pyqtSignal()
+    isReady = pyqtSignal(name='isReady')
     modificationChanged = pyqtSignal(bool)
-    cursorPositionChanged = pyqtSignal(int, int)
+    cursorPositionChanged = pyqtSignal(int, int, name='cursorPositionChanged')
     
     def __init__(self, file_info, parent=None):
         super(Ace, self).__init__(parent)
@@ -28,6 +27,8 @@ class Ace(QWebView):
         self.parent = parent
         self.file_info = file_info
         self.language = EditorHelper.lang_from_file_info(file_info)
+        self.waitForReady = False
+        self.loop = QEventLoop()
         
         settings = self.settings()
         settings.setAttribute(QWebSettings.JavascriptCanAccessClipboard, True)
@@ -37,7 +38,7 @@ class Ace(QWebView):
         showInspectorAction.triggered.connect(self.showInspector)
         self.addAction(showInspectorAction)
         
-        self.isReady.connect(self.editor_ready)
+        # self.isReady.connect(self.editor_ready)
         self.modificationChanged.connect(self.modification_changed)
         self.main_frame().javaScriptWindowObjectCleared.connect(self.__self_js)
         pckg, file_name = 'ace_editor', 'ace_editor.html'
@@ -49,8 +50,12 @@ class Ace(QWebView):
             text = html.escape(text)
             html_template = html_template.replace('{{ content }}', text)
         base_url = QUrl.fromLocalFile(os.path.dirname(__file__))
+        
         self.setHtml(html_template, base_url)
         self.modified = False
+        
+        if not self.waitForReady:
+            self.loop.exec()
     
     def modification_changed(self, b):
         self.modified = b
@@ -84,11 +89,14 @@ class Ace(QWebView):
     def __self_js(self):
         self.main_frame().addToJavaScriptWindowObject('AceEditor', self)
     
+    @pyqtSlot(name='isReady')
     def editor_ready(self):
         if self.language != None:
             self.set_mode(self.language.lower())
         self.set_focus()
-        self.editorReady.emit()
+        if self.loop.isRunning():
+            self.loop.quit()
+        self.waitForReady = True
     
     def showInspector(self):
         self.dialogInspector = QDialog(self)
