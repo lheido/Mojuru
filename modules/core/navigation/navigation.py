@@ -74,6 +74,8 @@ class Navigation(QWidget):
         self.menu_directories.setTitle('Directories')
         self.menu_add_action(
             'Open directory', self.open_directory, None, QKeySequence.Open)
+        self.menu_add_separator()
+        self.menu_add_action('Refresh', self.reset, None, QKeySequence.Refresh)
         # @TODO invoke_all
         self.menu_add_separator()
         self.menu.addMenu(self.menu_directories)
@@ -114,6 +116,7 @@ class Navigation(QWidget):
         self.add_separator()
         self.add_action('Delete', QKeySequence.Delete, 
                         FileSystemHelper.delete)
+        
         # @ToDo Alter.invoke_all('navigation_add_action', self)
         
         #restore previous session and data
@@ -131,6 +134,15 @@ class Navigation(QWidget):
         
         self.menu_button.setFocusPolicy(Qt.NoFocus)
         self.menu_button.setFocusProxy(self.tree)
+    
+    def reset(self, file_info):
+        self.model.beginResetModel()
+        current_dir = ModuleManager.core['settings'].Settings.value(
+            self.SETTINGS_CURRENT_DIR, '')
+        if current_dir:
+            for action in self.menu_directories.actions():
+                if action.data() == current_dir:
+                    action.trigger()
     
     def on_menu_button_clicked(self):
         pos = self.mapToGlobal(self.menu_button.pos())

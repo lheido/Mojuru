@@ -28,6 +28,7 @@
 <script src="ace_editor/js/mode-python.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
+    var langTools = ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.original_doc = editor.getValue();
@@ -64,8 +65,16 @@
         AceEditor.modificationChanged(modified);
     })
     editor.orignalToCurrentDoc = function() {
-        this.original_doc = this.getValue(); 
+        this.original_doc = this.getValue();
     }
+    // var customCompleter = {
+    //     getCompletions: function(editor, session, pos, prefix, callback) {
+    //         if (prefix.length === 0) { callback(null, []); return }
+    //         console.log(JSON.parse(AceEditor.test(prefix)));
+    //         callback(null, []); return;
+    //     }
+    // }
+    // langTools.addCompleter(customCompleter);
     AceEditor.isReady()
 </script>
 </body>

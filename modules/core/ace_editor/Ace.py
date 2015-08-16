@@ -38,7 +38,6 @@ class Ace(QWebView):
         showInspectorAction.triggered.connect(self.showInspector)
         self.addAction(showInspectorAction)
         
-        # self.isReady.connect(self.editor_ready)
         self.modificationChanged.connect(self.modification_changed)
         self.main_frame().javaScriptWindowObjectCleared.connect(self.__self_js)
         pckg, file_name = 'ace_editor', 'ace_editor.html'
@@ -56,6 +55,12 @@ class Ace(QWebView):
         
         if not self.waitForReady:
             self.loop.exec()
+    
+    @pyqtSlot(str, name='test', result=str)
+    @EditorHelper.json_dumps
+    def test(self, prefix):
+        print(prefix)
+        return ['plop', 'cool', 42, {'plop':23}]
     
     def modification_changed(self, b):
         self.modified = b

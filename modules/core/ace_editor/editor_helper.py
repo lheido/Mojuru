@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import json
 
 from PyQt5.QtCore import Qt
 
@@ -146,3 +147,8 @@ class EditorHelper:
                 return language
         return None
     
+    @classmethod
+    def json_dumps(cls, callback):
+        def wrapper(self, *args, **kwargs):
+            return json.dumps(callback(self, *args, **kwargs))
+        return wrapper
