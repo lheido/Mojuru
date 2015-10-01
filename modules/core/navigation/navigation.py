@@ -109,6 +109,8 @@ class Navigation(QWidget):
         self.context_menu = QMenu(self)
         self.add_action('New file', QKeySequence.New, 
                         FileSystemHelper.new_file)
+        self.add_action('New Directory', '', 
+                        FileSystemHelper.new_directory)
         self.add_separator()
         self.add_action('Copy', QKeySequence.Copy, FileSystemHelper.copy)
         self.add_action('Cut', QKeySequence.Cut, FileSystemHelper.cut)
