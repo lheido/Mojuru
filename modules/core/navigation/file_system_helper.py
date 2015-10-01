@@ -55,7 +55,7 @@ class FileSystemHelper:
             dst = file_info.absoluteFilePath()
         file_name = QFileDialog.getSaveFileName(parent, 'New file', dst)[0]
         if file_name:
-            with open(file_name, 'w') as fout:
+            with open(file_name, 'x') as fout:
                 fout.write('')
     
     @classmethod
