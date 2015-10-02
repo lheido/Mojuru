@@ -35,7 +35,7 @@
     editor.setOptions({
         enableEmmet: true,
         enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
+        enableLiveAutocompletion: false,
         enableSnippets: true,
         scrollPastEnd: true
     });
@@ -67,14 +67,17 @@
     editor.orignalToCurrentDoc = function() {
         this.original_doc = this.getValue();
     }
-    // var customCompleter = {
-    //     getCompletions: function(editor, session, pos, prefix, callback) {
-    //         if (prefix.length === 0) { callback(null, []); return }
-    //         console.log(JSON.parse(AceEditor.test(prefix)));
-    //         callback(null, []); return;
-    //     }
-    // }
-    // langTools.addCompleter(customCompleter);
+    var customCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+            if (prefix.length === 0) { callback(null, []); return }
+            var row = pos.row,
+                col = pos.column;
+            var line = session.getLine(row);
+            var wordList = JSON.parse(AceEditor.test(col, prefix, line));
+            callback(null, []); return;
+        }
+    }
+    langTools.addCompleter(customCompleter);
     AceEditor.isReady()
 </script>
 </body>
