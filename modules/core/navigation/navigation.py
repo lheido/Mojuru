@@ -110,6 +110,7 @@ class Navigation(QWidget):
         self.add_action('New file', QKeySequence.New, 
                         FileSystemHelper.new_file)
         self.add_separator()
+        self.add_action('Rename', '', FileSystemHelper.rename)
         self.add_action('Copy', QKeySequence.Copy, FileSystemHelper.copy)
         self.add_action('Cut', QKeySequence.Cut, FileSystemHelper.cut)
         self.add_action('Paste', QKeySequence.Paste, FileSystemHelper.paste)
