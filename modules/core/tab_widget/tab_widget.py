@@ -11,8 +11,10 @@ from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QFileDialog
 
 from alter import Alter
+from alter import ModuleManager
 
 @Alter.alter('main_window_add_horizontal_widget')
 def add_horizontal_widget(horizontal_widgets, parent):
@@ -36,6 +38,7 @@ class TabWidget(QTabWidget):
     def __init__(self, parent=None):
         super(TabWidget, self).__init__(parent)
         self.tabBar().installEventFilter(self)
+        self.tabBar().setExpanding(True)
         self.setTabsClosable(True)
         self.setMovable(True)
         self.setFocusPolicy(Qt.NoFocus)
@@ -62,6 +65,9 @@ class TabWidget(QTabWidget):
                         TabWidgetHelper.next_tab)
         self.add_action('Previous Tab', QKeySequence.PreviousChild, 
                         TabWidgetHelper.previous_tab)
+        self.add_separator()
+        self.add_action('Open file', QKeySequence.Open,
+                        TabWidgetHelper.open_file)
         Alter.invoke_all('tab_widget_add_action', self)
         self.currentChanged[int].connect(self.on_current_changed)
     
@@ -178,3 +184,12 @@ class TabWidgetHelper:
         if tab_widget.currentIndex() == 0:
             index = tab_widget.count() - 1
         tab_widget.setCurrentIndex(index)
+    
+    @classmethod
+    def open_file(cls, tab_widget):
+        project = ModuleManager.core['settings'].Settings.value(
+            ModuleManager.core['navigation'].Navigation.SETTINGS_CURRENT_DIR, '')
+        file_name = QFileDialog.getOpenFileName(tab_widget, "Open file", project)[0]
+        if file_name:
+            editor_class = ModuleManager.core['ace_editor'].AceEditor
+            tab_widget.add_tab(editor_class, QFileInfo(file_name))

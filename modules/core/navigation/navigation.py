@@ -109,6 +109,8 @@ class Navigation(QWidget):
         self.context_menu = QMenu(self)
         self.add_action('New file', QKeySequence.New, 
                         FileSystemHelper.new_file)
+        self.add_action('New Directory', '', 
+                        FileSystemHelper.new_directory)
         self.add_separator()
         self.add_action('Rename', '', FileSystemHelper.rename)
         self.add_action('Copy', QKeySequence.Copy, FileSystemHelper.copy)
@@ -277,7 +279,9 @@ class Navigation(QWidget):
             self.onFileItemActivated.emit(qFileInfo)
     
     def open_directory(self):
-        path = QFileDialog.getExistingDirectory(self, "Open Directory", ".")
+        project = ModuleManager.core['settings'].Settings.value(
+            self.SETTINGS_CURRENT_DIR, '')
+        path = QFileDialog.getExistingDirectory(self, "Open Directory", project)
         if path:
             name = os.path.basename(path)
             action = self.menu_add_directory(name, path)

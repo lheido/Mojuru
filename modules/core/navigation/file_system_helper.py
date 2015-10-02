@@ -4,6 +4,7 @@ import os
 import shutil
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtCore import QFileInfo
 
 class FileSystemHelper:
     
@@ -61,8 +62,19 @@ class FileSystemHelper:
             dst = file_info.absoluteFilePath()
         file_name = QFileDialog.getSaveFileName(parent, 'New file', dst)[0]
         if file_name:
-            with open(file_name, 'w') as fout:
+            with open(file_name, 'x') as fout:
                 fout.write('')
+    
+    @classmethod
+    def new_directory(cls, file_info, parent):
+        dst = file_info.absoluteDir().absolutePath()
+        if file_info.isDir():
+            dst = file_info.absoluteFilePath()
+        file_name = QFileDialog.getSaveFileName(parent, 'New directory', dst)[0]
+        if file_name:
+            name = QFileInfo(file_name).fileName()
+            parent_index = parent.model.index(dst)
+            parent.model.mkdir(parent_index, name)
     
     @classmethod
     def ready(cls):
