@@ -14,6 +14,11 @@ class FileSystemHelper:
         raise Exception('')
     
     @classmethod
+    def rename(cls, file_info, parent):
+        model_index = parent.model.index(file_info.absoluteFilePath())
+        parent.model.openPersistentEditor(model_index)
+    
+    @classmethod
     def copy(cls, file_info, parent):
         cls.file_to_copy = file_info
         cls.file_to_cut = None
@@ -41,7 +46,8 @@ class FileSystemHelper:
         if file_info.isFile():
             reply = parent.question('Delete this file', 'Are you sure?')
             if reply == QMessageBox.Yes:
-                os.remove(path)
+                index = parent.model.index(path)
+                parent.model.remove(index)
         elif file_info.isDir():
             reply = parent.question('Delete this directory', 'Are you sure?')
             if reply == QMessageBox.Yes:
