@@ -31,6 +31,17 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
         getattr(horizontal_widgets['tab_widget'], 'onFileItemActivated'))
 
 
+@Alter.alter('main_window_init')
+def add_tab_widget_actions(main_window):
+    tab_widget = main_window.horizontal_widgets['tab_widget']
+    main_window.add_action(
+        'Open file',
+        TabWidgetHelper.open_file,
+        shortcut = QKeySequence.Open,
+        menu = main_window.file_menu, 
+        instance = tab_widget
+    )
+
 class TabWidget(QTabWidget):
     """
     TabWidget class definition
@@ -129,7 +140,7 @@ class TabWidget(QTabWidget):
     
     def add_action(self, name, shortcut, callback, icon = None):
         """
-        Ajoute une action au context menu et au widget navigation lui même.
+        Ajoute une action au context menu et au widget lui même.
         Créer une fonction à la volé pour fournir des arguments aux fonctions
         associé aux actions.
         """

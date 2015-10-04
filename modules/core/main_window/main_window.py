@@ -141,3 +141,37 @@ class MainWindow(QMainWindow):
         ModuleManager.reload_all_modules('core')
         ModuleManager.reload_all_modules('custom')
         self.load_central_widget()
+    
+    def add_action(self, name, callback, **kwargs):
+        """
+        Ajoute une action au context menu et au widget lui même.
+        Créer une fonction à la volé pour fournir des arguments aux fonctions
+        de rappel.
+        """
+        action = QAction(name, self)
+        if 'icon' in kwargs:
+            action.setIcon(kwargs['icon'])
+        if 'shortcut' in kwargs:
+            action.setShortcut(kwargs['shortcut'])
+        action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        action.triggered.connect(self.__wrapper(callback, **kwargs))
+        self.addAction(action)
+        if 'menu' in kwargs:
+            kwargs['menu'].addAction(action)
+
+    def add_separator(self, menu):
+        """Simple abstraction of self.context_menu.addSeparator()"""
+        menu.addSeparator()
+    
+    def __wrapper(self, callback, **kwargs):
+        def __new_function():
+            """
+            __new_function représente la forme de tous les callbacks connecté
+            à une action pour pouvoir utiliser les raccourcis en même temps que
+            le menu contextuel.
+            """
+            args = [
+                kwargs['instance'] if 'instance' in kwargs else self
+            ]
+            callback(*args)
+        return __new_function
