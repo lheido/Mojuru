@@ -58,6 +58,8 @@ class FileInspectorHelper:
                 content = f.read()
                 name = file_info.fileName()
                 project = Settings.value(Navigation.SETTINGS_CURRENT_DIR, '')
+                if not path.startswith(project):
+                    project = None
                 checksum = hashlib.md5(content.encode()).hexdigest()
                 new_file = File(
                     path=path, project=project, name=name, checksum=checksum)
@@ -70,13 +72,42 @@ class FileInspectorHelper:
         return new_file
     
     @classmethod
+    def update_file(cls, file, file_info, commit=False):
+        path = file_info.absoluteFilePath()
+        lang = EditorHelper.lang_from_file_info(file_info)
+        if lang in cls.regex:
+            with open(path, 'r') as f:
+                content = f.read()
+                checksum = hashlib.md5(content.encode()).hexdigest()
+                if file.checksum != checksum:
+                    file.classes = cls.get_classes(file, content, lang)
+                    file.functions = cls.get_functions(file, content, lang)
+                    cls.session.add(file)
+                    if commit:
+                        cls.session.commit()
+        return file
+    
+    @classmethod
+    def get_or_insert_file(cls, file_info):
+        file_path = file_info.absoluteFilePath()
+        db_file = FileInspectorHelper.query(File).\
+            filter(File.path == file_path).first()
+        if not db_file:
+            db_file = FileInspectorHelper.insert_file(file_info, True)
+        return db_file
+    
+    @classmethod
     def get_classes(cls, file, content, lang):
         classes = []
         for match in cls.regex[lang]['class'].finditer(content):
             name = match.group('name')
             inherits = match.group('inherits')
             content = match.group('content')
-            classe = Class(name=name, inherits=inherits, file=file)
+            classe = cls.query(Class).\
+                filter(Class.file == file.id).\
+                filter(Class.name == name).first()
+            if classe is None:
+                classe = Class(name=name, inherits=inherits, file=file)
             classe.methods = cls.get_methods(file, content, lang)
             classes.append(classe)
         return classes
@@ -87,7 +118,11 @@ class FileInspectorHelper:
         for match in cls.regex[lang]['method'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            method = Function(name=name, args=args, file=file.id)
+            method = cls.query(Function).\
+                filter(Function.file == file.id).\
+                filter(Function.name == name).first()
+            if method is None:
+                method = Function(name=name, args=args, file=file.id)
             methods.append(method)
         return methods
     
@@ -97,6 +132,10 @@ class FileInspectorHelper:
         for match in cls.regex[lang]['function'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            function = Function(name=name, args=args, file=file.id)
+            function = cls.query(Function).\
+                filter(Function.file == file.id).\
+                filter(Function.name == name).first()
+            if function is None:
+                function = Function(name=name, args=args, file=file.id)
             functions.append(function)
         return functions

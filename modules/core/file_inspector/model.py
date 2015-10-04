@@ -27,6 +27,10 @@ class File(Base):
     checksum = Column(String)
     classes = relationship('Class')
     functions = relationship('Function')
+    
+    def __repr__(self):
+        _repr = "<File(\n\tname='{0}',\n\tpath='{1}',\n\tproject='{2}',\n\tchecksum='{3}',\n\tclasses={4}\n)>"
+        return _repr.format(self.name, self.path, self.project, self.checksum, self.classes)
 
 
 class Class(Base):
@@ -39,6 +43,10 @@ class Class(Base):
     parent = Column(ForeignKey('class.id'), nullable=True)
     methods = relationship('Function')
     file = Column(ForeignKey('file.id'))
+    
+    def __repr__(self):
+        _repr = "\n<Class(\n\tname='{0}',\n\tinherits='{1}',\n\tparent='{2}',\n\tfile={3},\n\tmethods={4}\n)>"
+        return _repr.format(self.name, self.inherits, self.parent, self.file, self.methods)
 
 
 class Function(Base):
@@ -51,6 +59,10 @@ class Function(Base):
     classe = Column(ForeignKey('class.id'), nullable=True)
     parent = Column(ForeignKey('function.id'), nullable=True)
     file = Column(ForeignKey('file.id'))
+    
+    def __repr__(self):
+        _repr = "\n<Function(\n\tname='{0}',\n\targs='{1}',\n\tclasse='{2}',\n\tparent='{3}'\n)>"
+        return _repr.format(self.name, self.args, self.classe, self.parent)
 
 Base.metadata.create_all(engine)
 # Base.metadata.drop_all(engine)

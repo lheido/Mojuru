@@ -31,6 +31,17 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
     getattr(horizontal_widgets['tab_widget'], 'currentChangedFileInfo').connect(
         getattr(horizontal_widgets['file_inspector'], 'onFileItemActivated'))
 
+@Alter.alter('editor_save')
+def on_file_saved(editor):
+    file_info = editor.file_info
+    file = FileInspectorHelper.query(File).\
+        filter(File.path == file_info.absoluteFilePath()).one()
+    file = FileInspectorHelper.update_file(file, file_info, True)
+    editor.parentWidget().parentWidget().parentWidget().parentWidget().\
+        parentWidget().parentWidget().horizontal_widgets['file_inspector'].\
+        populate(None, file)
+
+
 class FileInspector(QTreeView):
     """docstring for FileInspector"""
     
@@ -42,27 +53,26 @@ class FileInspector(QTreeView):
         header = QStandardItem('')
         self.model.setHorizontalHeaderItem(0, header)
     
-    def populate(self, file_info=None):
-        if file_info is not None and file_info.fileName() != self.model.horizontalHeaderItem(0).text():
+    def populate(self, file_info=None, db_file=None):
+        if file_info is not None:
             self.file_info = file_info
-            self.model.clear()
-            file_path = file_info.absoluteFilePath()
-            try:
-                db_file = FileInspectorHelper.query(File).filter(
-                    File.path == file_path).one()
-            except Exception as e:
-                db_file = FileInspectorHelper.insert_file(file_info, True)
-            if db_file:
-                for classe in db_file.classes:
-                    parent = QStandardItem(classe.name)
-                    for method in classe.methods:
-                        parent.appendRow(QStandardItem(method.name))
-                    self.model.appendRow(parent)
-                for function in db_file.functions:
-                    self.model.appendRow(QStandardItem(function.name))
-            header = QStandardItem(file_info.fileName())
-            self.model.setHorizontalHeaderItem(0, header)
-            self.expandAll()
+            db_file = FileInspectorHelper.get_or_insert_file(file_info)
+        self.model.clear()
+        if db_file:
+            for classe in db_file.classes:
+                parent = QStandardItem("{0}:".format(classe.name))
+                for method in classe.methods:
+                    parent.appendRow(QStandardItem("{0}()".\
+                        format(method.name)))
+                self.model.appendRow(parent)
+            for function in db_file.functions:
+                self.model.appendRow(QStandardItem("{0}()".\
+                    format(function.name)))
+        
+        name = db_file.name if db_file else file_info.fileName()
+        header = QStandardItem(name)
+        self.model.setHorizontalHeaderItem(0, header)
+        self.expandAll()
     
     @pyqtSlot(QFileInfo)
     def onFileItemActivated(self, file_info):
