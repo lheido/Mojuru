@@ -181,6 +181,13 @@ QTreeView::item:selected {
     color: white;
 }
 
+QTreeView QHeaderView::section {
+    background-color: #383838;
+    border: none;
+    padding: 10px;
+    padding-top: 11px;
+}
+
 QMainWindow {
     background-color: #424242;
 }
@@ -214,4 +221,8 @@ QPushButton::menu-indicator {
 QSpinBox {
     border: none;
     background-color: transparent;
+}
+
+QDialog {
+    background: #424242;
 }
