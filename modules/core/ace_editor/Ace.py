@@ -44,7 +44,7 @@ class Ace(QWebView):
         resource = pkg_resources.resource_string(pckg, file_name)
         html_template = str(resource, 'utf-8')
         #insert file content
-        with open(self.file_info.absoluteFilePath(), 'r') as f:
+        with open(self.file_info.absoluteFilePath(), 'r',encoding="utf-8") as f:
             text = f.read()
             text = html.escape(text)
             html_template = html_template.replace('{{ content }}', text)
@@ -69,7 +69,8 @@ class Ace(QWebView):
         Alter.invoke_all('editor_presave', self)
         if self.modified:
             with open(self.file_info.absoluteFilePath(), 'w') as f:
-                f.write(self.get_value())
+                content = self.get_value()
+                f.write(content)
             self.original_to_current_doc()
             self.modificationChanged.emit(False)
             parent.status_bar.showMessage(self.tr("Saved file."))

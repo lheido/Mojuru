@@ -38,7 +38,6 @@ class TabWidget(QTabWidget):
     def __init__(self, parent=None):
         super(TabWidget, self).__init__(parent)
         self.tabBar().installEventFilter(self)
-        self.tabBar().setExpanding(True)
         self.setTabsClosable(True)
         self.setMovable(True)
         self.setFocusPolicy(Qt.NoFocus)

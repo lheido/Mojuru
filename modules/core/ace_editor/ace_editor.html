@@ -17,9 +17,9 @@
         }
     </style>
 </head>
-<body>
+<body charset="utf-8">
 
-<div id="editor">{{ content }}</div>
+<div id="editor" charset="UTF-8">{{ content }}</div>
 
 <script src="ace_editor/js/emmet.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace_editor/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -27,7 +27,7 @@
 <script src="ace_editor/src-noconflict/ext-emmet.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace_editor/js/mode-python.js" type="text/javascript" charset="utf-8"></script>
 
-<script>
+<script charset="utf-8">
     var langTools = ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
@@ -35,7 +35,7 @@
     editor.setOptions({
         enableEmmet: true,
         enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
+        enableLiveAutocompletion: false,
         enableSnippets: true,
         scrollPastEnd: true
     });
