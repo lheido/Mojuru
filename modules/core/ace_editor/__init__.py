@@ -13,7 +13,10 @@ dependencies = [
     'tab_widget'
 ]
 
-alterations = []
+alterations = [
+    'editor_presave',
+    'editor_save'
+]
 
 switched_off = False
 

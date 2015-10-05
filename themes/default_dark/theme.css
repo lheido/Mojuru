@@ -32,7 +32,7 @@ QScrollBar:vertical {
 QScrollBar::handle:horizontal, QScrollBar::handle:vertical {
 	background: #848484;
 	min-width: 20px;
-    border-radius: 4%;
+  border-radius: 0%;
 }
 
 QScrollBar::handle:vertical{
@@ -101,16 +101,16 @@ QTabBar::tab {
 }
 
 QTabBar::tab:first {
-    border-top-left-radius: 5px;
+    border-top-left-radius: 0px;
 }
 
 QTabBar::tab:last {
-    border-top-right-radius: 5px;
+    border-top-right-radius: 0px;
 }
 
 QTabBar::tab:only-one {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
 }
 
 QTabBar::tab:!selected {
@@ -128,7 +128,7 @@ QTabBar::tab:!selected:hover {
 }
 
 QTabBar::tab:first:!selected {
-    border-top-left-radius: 5px;
+    border-top-left-radius: 0px;
     /*border-left: 1px solid #848484;
     border-right: 1px solid #848484;*/
 }
@@ -163,10 +163,11 @@ QTreeView {
     /*border-top: 1px solid #232323;
     border-right: 1px solid #232323;*/
     border: none;
-    padding-top: 10px;
-    border-top-right-radius: 5px;
+    padding-top: 0px;
+    border-top-right-radius: 0px;
     background-color: #232323;
     color: #C4C4C4;
+    margin-top: 3px;
 }
 
 QTreeView::item:hover,
@@ -178,6 +179,13 @@ QTreeView::branch:selected {
 
 QTreeView::item:selected {
     color: white;
+}
+
+QTreeView QHeaderView::section {
+    background-color: #383838;
+    border: none;
+    padding: 10px;
+    padding-top: 11px;
 }
 
 QMainWindow {
@@ -203,7 +211,7 @@ QPushButton, QTabWidget::tab QPushButton {
 }
 
 QPushButton:pressed, QTabWidget::tab QPushButton:pressed {
-    background-color: black;
+    background-color: #333333;
 }
 
 QPushButton::menu-indicator {
@@ -213,4 +221,8 @@ QPushButton::menu-indicator {
 QSpinBox {
     border: none;
     background-color: transparent;
+}
+
+QDialog {
+    background: #424242;
 }

@@ -4,6 +4,7 @@
 import os
 import pkg_resources
 import html
+import re
 
 from PyQt5.QtCore import Qt, QUrl, pyqtSignal, pyqtSlot, QEventLoop
 from PyQt5.QtWidgets import QAction, QDialog, QVBoxLayout, QSizePolicy
@@ -16,6 +17,8 @@ from .editor_helper import EditorHelper
 
 class Ace(QWebView):
     """ Embbeded Ace javascript web editor """
+    
+    regex = re.compile('\W*([a-zA-Z\/\_\.]+)')
     
     isReady = pyqtSignal(name='isReady')
     modificationChanged = pyqtSignal(bool)
@@ -56,9 +59,13 @@ class Ace(QWebView):
         if not self.waitForReady:
             self.loop.exec()
     
-    @pyqtSlot(str, name='test', result=str)
+    @pyqtSlot(int, str, str, name='test', result=str)
     @EditorHelper.json_dumps
-    def test(self, prefix):
+    def test(self, col, pr, line):
+        prefix = self.regex.findall(line[:col])[-1]
+        # m = self.regex.search(line[:col])
+        # if m:
+        #     prefix = m.groups()
         print(prefix)
         return ['plop', 'cool', 42, {'plop':23}]
     

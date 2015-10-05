@@ -4,6 +4,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QIcon
@@ -30,10 +31,23 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
         getattr(horizontal_widgets['tab_widget'], 'onFileItemActivated'))
 
 
+@Alter.alter('main_window_init')
+def add_tab_widget_actions(main_window):
+    tab_widget = main_window.horizontal_widgets['tab_widget']
+    main_window.add_action(
+        'Open file',
+        TabWidgetHelper.open_file,
+        shortcut = QKeySequence.Open,
+        menu = main_window.file_menu, 
+        instance = tab_widget
+    )
+
 class TabWidget(QTabWidget):
     """
     TabWidget class definition
     """
+    
+    currentChangedFileInfo = pyqtSignal(QFileInfo)
     
     def __init__(self, parent=None):
         super(TabWidget, self).__init__(parent)
@@ -81,8 +95,10 @@ class TabWidget(QTabWidget):
     
     def on_current_changed(self, index):
         if index != -1:
-            self.setFocusProxy(self.widget(index))
+            widget = self.widget(index)
+            self.setFocusProxy(widget)
             self.setFocus(Qt.TabFocusReason)
+            self.currentChangedFileInfo.emit(widget.file_info)
     
     # the function name must be equal to signal name.
     # decorator because reduce the amount of memory used and is slightly faster
@@ -123,7 +139,7 @@ class TabWidget(QTabWidget):
     
     def add_action(self, name, shortcut, callback, icon = None):
         """
-        Ajoute une action au context menu et au widget navigation lui même.
+        Ajoute une action au context menu et au widget lui même.
         Créer une fonction à la volé pour fournir des arguments aux fonctions
         associé aux actions.
         """
