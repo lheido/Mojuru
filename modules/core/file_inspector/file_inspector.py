@@ -34,9 +34,7 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
 @Alter.alter('editor_save')
 def on_file_saved(editor):
     file_info = editor.file_info
-    file = FileInspectorHelper.query(File).\
-        filter(File.path == file_info.absoluteFilePath()).one()
-    file = FileInspectorHelper.update_file(file, file_info, True)
+    file = FileInspectorHelper.update_file(file_info, True)
     editor.parentWidget().parentWidget().parentWidget().parentWidget().\
         parentWidget().parentWidget().horizontal_widgets['file_inspector'].\
         populate(None, file)
