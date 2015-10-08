@@ -97,7 +97,7 @@ class Ace(QWebView):
     def send_js(self, script):
         """ Convinient function to send javascript to ace editor """
         return self.main_frame().evaluateJavaScript(script)
-
+    
     def __self_js(self):
         self.main_frame().addToJavaScriptWindowObject('AceEditor', self)
     
