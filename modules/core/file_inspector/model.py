@@ -65,5 +65,5 @@ class Function(Base):
         return _repr.format(self.id, self.name, self.classe, self.parent, self.file)
 
 
-Base.metadata.drop_all(engine)
+# Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
