@@ -64,5 +64,6 @@ class Function(Base):
         _repr = "<Function(id={0}, name='{1}', classe={2}, parent={3}, file={4})>"
         return _repr.format(self.id, self.name, self.classe, self.parent, self.file)
 
+
+Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
-# Base.metadata.drop_all(engine)

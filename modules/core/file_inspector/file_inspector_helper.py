@@ -86,6 +86,7 @@ class FileInspectorHelper:
         path = file_info.absoluteFilePath()
         lang = EditorHelper.lang_from_file_info(file_info)
         file = cls.get_or_insert_file(file_info)
+        print(file)
         if lang in cls.regex and file:
             with open(path, 'r') as f:
                 content = f.read()
@@ -94,8 +95,8 @@ class FileInspectorHelper:
                     file.checksum = checksum
                     cls.get_classes(file, content, lang)
                     cls.get_functions(file, content, lang)
+                    print(file)
                     print(cls.session.dirty)
-                    print(cls.session.new)
                     if commit:
                         cls.session.commit()
         print('---- end update ----')
@@ -145,7 +146,7 @@ class FileInspectorHelper:
             print('method', name)
             method = cls._get_method(classe, name)
             if not method:
-                method = Function(name=name, args=args, file=file.id, classe=classe.id)
+                method = Function(name=name, args=args, classe=classe.id)
                 classe.methods.append(method)
             methods.append(method)
         #clean methods
