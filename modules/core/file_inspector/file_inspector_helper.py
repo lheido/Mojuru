@@ -27,8 +27,13 @@ class FileInspectorHelper:
     regex = {
         'Python': {
             'class' : re.compile(r"^class (?P<name>[a-zA-Z0-9_]*)\(?(?P<inherits>[a-zA-Z0-9_]*)\)?:\n(?P<content>(?P<last_line> {4,}.*\r?\n?)*)", re.M),
-            'method': re.compile(r"^\n? {4,}def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
+            'method': re.compile(r"^\n? {4}def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
             'function': re.compile(r"^def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
+        },
+        'PHP': {
+            'class': re.compile(r"^class (?P<name>[a-zA-Z0-9_]*) ?\r?\n?\{(?P<content>(?P<last_line>\r?\n? {2,}.*\r?\n?)*)\}", re.M),
+            'method': re.compile(r"(?P<access>public|protected|private)? (?P<static>static)?(?P=static)? ?function (?P<name>[a-zA-Z0-9_]*) ?\((?P<args>.*)\)", re.M),
+            'function': re.compile(r"^function (?P<name>[a-zA-Z0-9_]*) ?\((?P<args>.*)\)", re.M)
         }
     }
     
@@ -86,7 +91,6 @@ class FileInspectorHelper:
         path = file_info.absoluteFilePath()
         lang = EditorHelper.lang_from_file_info(file_info)
         file = cls.get_or_insert_file(file_info)
-        print(file)
         if lang in cls.regex and file:
             with open(path, 'r') as f:
                 content = f.read()
@@ -95,11 +99,8 @@ class FileInspectorHelper:
                     file.checksum = checksum
                     cls.get_classes(file, content, lang)
                     cls.get_functions(file, content, lang)
-                    print(file)
-                    print(cls.session.dirty)
                     if commit:
                         cls.session.commit()
-        print('---- end update ----')
         return file
     
     @classmethod
@@ -128,7 +129,6 @@ class FileInspectorHelper:
         for i, classe in enumerate(file.classes):
             if classe not in classes:
                 del file.classes[i]
-        print('---- end get_classes ----')
     
     @classmethod
     def _get_classe(cls, file, name):
@@ -143,7 +143,6 @@ class FileInspectorHelper:
         for match in cls.regex[lang]['method'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            print('method', name)
             method = cls._get_method(classe, name)
             if not method:
                 method = Function(name=name, args=args, classe=classe.id)
@@ -153,7 +152,6 @@ class FileInspectorHelper:
         for i, method in enumerate(classe.methods):
             if method not in methods:
                 del classe.methods[i]
-        print('---- end get_methods ----')
     
     @classmethod
     def _get_method(cls, classe, name):
@@ -168,7 +166,6 @@ class FileInspectorHelper:
         for match in cls.regex[lang]['function'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            print('function', name)
             function = cls._get_function(file, name)
             if not function:
                 function = Function(name=name, args=args, file=file.id)
@@ -178,7 +175,6 @@ class FileInspectorHelper:
         for i, function in enumerate(file.functions):
             if function not in functions:
                 del file.functions[i]
-        print('---- end get_functions ----')
     
     @classmethod
     def _get_function(cls, file, name):
