@@ -85,15 +85,15 @@ class ModuleManager:
 
 class ModuleInfo:
     """
-A module come with (all params are optional):
-    - name: human readable name.
-    - module_name:  package_name by default.
-    - description: the module description.
-    - dependencies: the module_name list. (not yet)
-    - alterations: alterations to register.
-    - switched_off: the module can be disable (set to True) or not.
-    - reloadable: the module can be reloaded
-    - weight: the module weight to ordering invocation.
+    A module come with (all params are optional):
+        - name: human readable name.
+        - module_name:  package_name by default.
+        - description: the module description.
+        - dependencies: the module_name list. (not yet)
+        - alterations: alterations to register.
+        - switched_off: the module can be disable (set to True) or not.
+        - reloadable: the module can be reloaded
+        - weight: the module weight to ordering invocation.
     """
     name = ''
     module_name = ''
