@@ -35,11 +35,12 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
 def on_file_saved(editor):
     file_info = editor.file_info
     file = FileInspectorHelper.query(File).\
-        filter(File.path == file_info.absoluteFilePath()).one()
-    file = FileInspectorHelper.update_file(file, file_info, True)
-    editor.parentWidget().parentWidget().parentWidget().parentWidget().\
-        parentWidget().parentWidget().horizontal_widgets['file_inspector'].\
-        populate(None, file)
+        filter(File.path == file_info.absoluteFilePath()).first()
+    if file:
+        file = FileInspectorHelper.update_file(file, file_info, True)
+        editor.parentWidget().parentWidget().parentWidget().parentWidget().\
+            parentWidget().parentWidget().horizontal_widgets['file_inspector'].\
+            populate(None, file)
 
 
 class FileInspector(QTreeView):
