@@ -10,7 +10,7 @@ from alter import ModuleManager
 
 
 class EditorHelper:
-
+    
     supportedModes = {
         'ABAP':        ["^abap$"],
         'ABC':         ["^abc$"],

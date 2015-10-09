@@ -9,6 +9,7 @@ from PyQt5.QtCore import QFileInfo
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.ext.declarative import declarative_base
 
 from alter import ModuleManager
@@ -26,8 +27,13 @@ class FileInspectorHelper:
     regex = {
         'Python': {
             'class' : re.compile(r"^class (?P<name>[a-zA-Z0-9_]*)\(?(?P<inherits>[a-zA-Z0-9_]*)\)?:\n(?P<content>(?P<last_line> {4,}.*\r?\n?)*)", re.M),
-            'method': re.compile(r"^\n? {4,}def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
+            'method': re.compile(r"^\n? {4}def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
             'function': re.compile(r"^def (?P<name>[a-zA-Z0-9_]*)\((?P<args>.*)\):", re.M),
+        },
+        'PHP': {
+            'class': re.compile(r"^class (?P<name>[a-zA-Z0-9_]*) ?\r?\n?\{(?P<content>(?P<last_line>\r?\n? {2,}.*\r?\n?)*)\}", re.M),
+            'method': re.compile(r"(?P<access>public|protected|private)? (?P<static>static)?(?P=static)? ?function (?P<name>[a-zA-Z0-9_]*) ?\((?P<args>.*)\)", re.M),
+            'function': re.compile(r"^function (?P<name>[a-zA-Z0-9_]*) ?\((?P<args>.*)\)", re.M)
         }
     }
     
@@ -49,6 +55,15 @@ class FileInspectorHelper:
         return cls.session.query(*args, **kwargs)
     
     @classmethod
+    def _one(cls, query):
+        try:
+            return query.one()
+        except NoResultFound as e:
+            return None
+        except MultipleResultsFound as e:
+            raise e
+    
+    @classmethod
     def insert_file(cls, file_info, commit=False):
         path = file_info.absoluteFilePath()
         lang = EditorHelper.lang_from_file_info(file_info)
@@ -63,8 +78,8 @@ class FileInspectorHelper:
                 checksum = hashlib.md5(content.encode()).hexdigest()
                 new_file = File(
                     path=path, project=project, name=name, checksum=checksum)
-                new_file.classes = cls.get_classes(new_file, content, lang)
-                new_file.functions = cls.get_functions(new_file, content, lang)
+                cls.get_classes(new_file, content, lang)
+                cls.get_functions(new_file, content, lang)
                 cls.session_maker()
                 cls.session.add(new_file)
                 if commit:
@@ -72,17 +87,18 @@ class FileInspectorHelper:
         return new_file
     
     @classmethod
-    def update_file(cls, file, file_info, commit=False):
+    def update_file(cls, file_info, commit=False):
         path = file_info.absoluteFilePath()
         lang = EditorHelper.lang_from_file_info(file_info)
-        if lang in cls.regex:
+        file = cls.get_or_insert_file(file_info)
+        if lang in cls.regex and file:
             with open(path, 'r') as f:
                 content = f.read()
                 checksum = hashlib.md5(content.encode()).hexdigest()
                 if file.checksum != checksum:
-                    file.classes = cls.get_classes(file, content, lang)
-                    file.functions = cls.get_functions(file, content, lang)
-                    cls.session.add(file)
+                    file.checksum = checksum
+                    cls.get_classes(file, content, lang)
+                    cls.get_functions(file, content, lang)
                     if commit:
                         cls.session.commit()
         return file
@@ -90,9 +106,9 @@ class FileInspectorHelper:
     @classmethod
     def get_or_insert_file(cls, file_info):
         file_path = file_info.absoluteFilePath()
-        db_file = FileInspectorHelper.query(File).\
-            filter(File.path == file_path).first()
-        if not db_file:
+        db_file = cls._one(FileInspectorHelper.query(File).\
+            filter(File.path == file_path))
+        if db_file is None:
             db_file = FileInspectorHelper.insert_file(file_info, True)
         return db_file
     
@@ -103,28 +119,46 @@ class FileInspectorHelper:
             name = match.group('name')
             inherits = match.group('inherits')
             content = match.group('content')
-            classe = cls.query(Class).\
-                filter(Class.file == file.id).\
-                filter(Class.name == name).first()
-            if classe is None:
-                classe = Class(name=name, inherits=inherits, file=file)
-            classe.methods = cls.get_methods(file, content, lang)
+            classe = cls._get_classe(file, name)
+            if not classe:
+                classe = Class(name=name, inherits=inherits, file=file.id)
+                file.classes.append(classe)
+            cls.get_methods(file, classe, content, lang)
             classes.append(classe)
-        return classes
+        #clean classes
+        for i, classe in enumerate(file.classes):
+            if classe not in classes:
+                del file.classes[i]
     
     @classmethod
-    def get_methods(cls, file, content, lang):
+    def _get_classe(cls, file, name):
+        for classe in file.classes:
+            if classe.name == name:
+                return classe
+        return None
+    
+    @classmethod
+    def get_methods(cls, file, classe, content, lang):
         methods = []
         for match in cls.regex[lang]['method'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            method = cls.query(Function).\
-                filter(Function.file == file.id).\
-                filter(Function.name == name).first()
-            if method is None:
-                method = Function(name=name, args=args, file=file.id)
+            method = cls._get_method(classe, name)
+            if not method:
+                method = Function(name=name, args=args, classe=classe.id)
+                classe.methods.append(method)
             methods.append(method)
-        return methods
+        #clean methods
+        for i, method in enumerate(classe.methods):
+            if method not in methods:
+                del classe.methods[i]
+    
+    @classmethod
+    def _get_method(cls, classe, name):
+        for method in classe.methods:
+            if method.name == name:
+                return method
+        return None
     
     @classmethod
     def get_functions(cls, file, content, lang):
@@ -132,10 +166,19 @@ class FileInspectorHelper:
         for match in cls.regex[lang]['function'].finditer(content):
             name = match.group('name')
             args = match.group('args')
-            function = cls.query(Function).\
-                filter(Function.file == file.id).\
-                filter(Function.name == name).first()
-            if function is None:
+            function = cls._get_function(file, name)
+            if not function:
                 function = Function(name=name, args=args, file=file.id)
+                file.functions.append(function)
             functions.append(function)
-        return functions
+        #clean functions
+        for i, function in enumerate(file.functions):
+            if function not in functions:
+                del file.functions[i]
+    
+    @classmethod
+    def _get_function(cls, file, name):
+        for function in file.functions:
+            if function.name == name:
+                return function
+        return None
