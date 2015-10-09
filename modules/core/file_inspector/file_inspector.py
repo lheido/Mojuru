@@ -35,8 +35,8 @@ def connect_widgets(vertical_widgets, horizontal_widgets):
 def on_file_saved(editor):
     file_info = editor.file_info
     file = FileInspectorHelper.update_file(file_info, True)
-    editor.parentWidget().parentWidget().parentWidget().parentWidget()
-        parentWidget().parentWidget().horizontal_widgets['file_inspector']
+    editor.parentWidget().parentWidget().parentWidget().parentWidget().\
+        parentWidget().parentWidget().horizontal_widgets['file_inspector'].\
         populate(None, file)
 
 

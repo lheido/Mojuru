@@ -117,7 +117,9 @@ class FileInspectorHelper:
         classes = []
         for match in cls.regex[lang]['class'].finditer(content):
             name = match.group('name')
-            inherits = match.group('inherits')
+            inherits = None
+            if 'inherits' in match.groupdict():
+                inherits = match.group('inherits')
             content = match.group('content')
             classe = cls._get_classe(file, name)
             if not classe:
