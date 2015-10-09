@@ -204,10 +204,14 @@ QMenu::item:selected, QTabWidget::tab QMenu::item:selected {
     background-color: #232323;
 }
 
-QPushButton, QTabWidget::tab QPushButton {
-    padding: 10px;
+QTabWidget::tab QPushButton {
+    padding: 0px;
     background-color: transparent;
     border: 1px solid transparent;
+}
+
+QTabWidget::right-corner > QPushButton {
+    padding: 10px;
 }
 
 QPushButton:pressed, QTabWidget::tab QPushButton:pressed {
